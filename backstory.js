@@ -124,7 +124,7 @@ var ChildhoodMemories = {
 	"11-22": "You spent most of your childhood alone, with no close friends",
 	"23-34": "Others saw you as being different or strange, and so you had few companions",
 	"35-46": "You had a few close friends and lived an ordinary childhood",
-	"57-68": "You had several friends, and your childhood was generally a happy one",
+	"47-68": "You had several friends, and your childhood was generally a happy one",
 	"69-80": "You always found it easy to make friends, and you loved being around people",
 	"81-100": "Everyone knew who you were, and you had friends everywhere you went"
 };

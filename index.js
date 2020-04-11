@@ -16,6 +16,7 @@ var backstory = [];
 $("#button").click(function () {
     $("#button").css({ display: "none" });
     $("#wait").css({ display: "block" });
+    document.body.style.cursor = "wait";
     main();
 });
 
@@ -40,6 +41,7 @@ function main() {
 
 function showInfo() {
 
+    document.body.style.cursor = "default";
     $("#box").css({ display: "flex" });
     $("#wait").css({ display: "none" });
 
@@ -102,11 +104,12 @@ function showInfo() {
 
     }
 
-    console.log(backstory);
-
-    document.getElementById("firstline").append(character_base["Age"] + " y/o " + backstory[0][1]);
+    document.getElementById("firstline").innerHTML = character_base["Age"] + " y/o " + backstory[0][1];
+    
+    document.getElementById("shortbio").innerHTML = "<h5>Bio</h5>";
     document.getElementById("shortbio").append("You're a " + backstory[1][1] + " " + character_base["Class"] + ". " + backstory[2][1]);
 
+    document.getElementById("birthstory").innerHTML = "<h5>Childhood</h5>";
     document.getElementById("birthstory").append("You were born " + backstory[3][1] + ". ");
     
     if(backstory[4][0] != "Parents") {
@@ -117,16 +120,19 @@ function showInfo() {
     
     if(backstory[8][0] != "ChildhoodMemories") {
         document.getElementById("birthstory").append(backstory[8][1] + ". ");
-        backstory.splice(8, 1);
-    }
 
-    if(backstory[8][0] != "ChildhoodMemories") {
-        document.getElementById("birthstory").append("They " + backstory[8][1] + ". ");
+        if(backstory[9][0] != "ChildhoodMemories") {
+            document.getElementById("birthstory").append("They " + backstory[9][1] + ". ");
+            backstory.splice(8, 1);
+        }
+
         backstory.splice(8, 1);
     }
 
     document.getElementById("birthstory").append("You live " + backstory[6][1] + " " + backstory[7][1] + ". ");
     document.getElementById("birthstory").append(backstory[8][1] + ". ");
+    
+    document.getElementById("lifestory").innerHTML = "<h5>Background</h5>";
     document.getElementById("lifestory").append("Your occupation is being a " + backstory[9][1] + ". " + backstory[10][1] + " ");
 
     document.getElementById("lifestory").append(backstory[11][1]);
