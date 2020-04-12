@@ -4,7 +4,7 @@ var character_base = {};
 var abilityScores = {};
 // All random proficiencies
 var proficiencies = [];
-// Starting equipment
+// [name, amount]
 var equipment = [];
 // [spellName, spellType]
 var spellList = [];
@@ -30,7 +30,8 @@ function main() {
             getAbilityScores();
             addExtraAbilityScores();
             getProficiencies();
-            getSpellcasting(); //needs more time
+            getStartingEquipment();
+            getSpellcasting();
             getAge();
             getLanguages();
             setTimeout(showInfo, 2000);
@@ -69,6 +70,12 @@ function showInfo() {
         var prof = document.createElement("h4");
         prof.innerHTML = proficiencies[i];
         document.getElementById("proficiences").appendChild(prof);
+    }
+
+    for(var i = 0; i < equipment.length; i++) {
+        var e = document.createElement("h4");
+        e.innerHTML = equipment[i][0] + " (" + equipment[i][1] + ")";
+        document.getElementById("equipment").appendChild(e);
     }
 
     for(var j = 0; j < languages.length; j++) {
@@ -371,7 +378,6 @@ function getAge() {
     character_base["Age"] = randIndex;
 }
 
-// KONSTIGT UPPLÄGG (KASTA SKITEN) / Kolla om du får det att funka sen på slutet kanske..
 function getStartingEquipment() {
 
     $.getJSON('https://www.dnd5eapi.co/api/starting-equipment', function (json) {
@@ -402,19 +408,28 @@ function getStartingEquipment() {
                 }
             }
 
-            for (var index = 0; index < choiceBoxes.length; index++) {
+            for(var i = 0; i < choiceBoxes.length; i++) {
 
-                $(json[choiceBoxes[index]]).each(function (i) {
+                var chooseBoxes = json[choiceBoxes[i]];
+                var randIndex = Math.floor(Math.random() * chooseBoxes.length);
 
-                    var theEquipment = [];
-                    var choose = json[choiceBoxes[index]][i].choose;
+                $(json[choiceBoxes[i]][randIndex]).each(function (j) {
 
-                    $(json[choiceBoxes[index]][i].from).each(function (j) {
-                        console.log(json[choiceBoxes[index]][j]);
-                    });
+                    var sumItems = json[choiceBoxes[i]][randIndex].from;
+                    var howMany = json[choiceBoxes[i]][randIndex].choose;
 
-                    console.log("done with box");
+                    for(var k = 0; k < howMany; k++) {
+
+                        // Loop + if sats för att kolla att man inte lägger till samma sak flera gånger
+
+                        var randomIndex = Math.floor(Math.random() * sumItems.length);
+                        var item = json[choiceBoxes[i]][randIndex].from[randomIndex].item.name;
+                        var amount = json[choiceBoxes[i]][randIndex].from[randomIndex].quantity;
+                        equipment.push([item, amount]);                  
+                    }
+
                 });
+
             }
 
         });
