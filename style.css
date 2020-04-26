@@ -173,6 +173,7 @@ h5 {
     overflow: scroll;
     flex-direction: column;
     justify-content: space-between;
+    display: none;
 }
 
 .projectInformation > div {
@@ -229,7 +230,6 @@ h5 {
     cursor: pointer;
     border: none;
     font-size: 13px;
-    display: none;
 }
 
 #showinfo:hover {
