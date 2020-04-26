@@ -7,11 +7,14 @@
         <script src="https://code.jquery.com/jquery-latest.js"></script>
         <script defer src="index.js" charset="utf-8"></script>
         <script defer type="text/javascript" src="backstory.js"></script> 
-    </head>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">    </head>
     <body>
 
         <div id="wrapper">
 
+            <button id="showinfo">Project info</button>
+
+            <section class="randomizer">
             <button id="button">Randomize character</button>
 
             <div id="wait">
@@ -21,8 +24,6 @@
             <div id="box">
 
                 <div id="profileInfo">  
-
-                    <div id="levelCounter"><p>1</p></div>
 
                     <div id="title"></div>
 
@@ -58,7 +59,39 @@
 
                 </div>
             </div>
-            
+        </section>
+
+        <section class="projectInformation">
+            <div>
+            <h2>Project description</h2>
+
+            <p>This is a Dungeons & Dragons randomizer where a character is created for you to use in a campaign.
+                The randomizer is only covering what the official 5th Edition SRD allows, so only for example the basic classes
+                and races are avaliable.</p>
+
+            <h2>How it works</h2>
+                <p>When randomizing a character the app fetches information from the
+                    <a href="https://www.dnd5eapi.co/" target="_blank">dnd5eapi.co</a> using JQUERY, and picks out a random
+                    object using the Math.Random() function. Subraces and subclasses have a 40% chance of being chosen.
+                    Backgrounds are picked from a generator at <a href="https://github.com/rushl/DnD-5e-Background" target="_blank">github.com/rushl</a> 
+                    with some code tweaking to fit this app.</p>
+
+            <h2>What is left to do:</h2>
+            <ul>
+                <li>Extra languages, proficiences and traits need to be picked depending on the race that gets picked.</li>
+                <li>Button to allow a new randomized character to be made, in this version you need to reload page.</li>
+                <li>Present static information (like saving throws, hit die, spellcasting ability etc.) in the character sheet.</li>
+                <li>Make it possible to export a PDF character sheet with all information.</li>
+                <li>Update the design to make it look hella fresh and mobile friendly.</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Repository is at my <a href="https://github.com/ElinoreHagman/dungeons-dragonsRandomizer" target="_blank">github</a></h3>
+            <h3>Visit my website at <a href="https://www.elinorehagman.se/" target="_blank">elinorehagman.se</a></h3>
+
+        </div>
+        </section>
+
         </div>
 
     </body>

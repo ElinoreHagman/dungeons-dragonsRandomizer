@@ -20,6 +20,10 @@ $("#button").click(function () {
     main();
 });
 
+$("#showinfo").click(function () {
+    $(".projectInformation").slideToggle();
+});
+
 function main() {
 
     getRace.done(function () {
@@ -111,42 +115,42 @@ function showInfo() {
 
     }
 
-    document.getElementById("firstline").innerHTML = character_base["Age"] + " y/o " + backstory[0][1];
+    document.getElementById("firstline").innerHTML = "<h2>" + character_base["Age"] + " y/o " + backstory[0][1] + "</h2>";
     
     document.getElementById("shortbio").innerHTML = "<h5>Bio</h5>";
-    document.getElementById("shortbio").append("You're a " + backstory[1][1] + " " + character_base["Class"] + ". " + backstory[2][1]);
+    $( "#shortbio" ).append("<p> You're a " + backstory[1][1] + " " + character_base["Class"] + ". " + backstory[2][1] + "</p>");
 
     document.getElementById("birthstory").innerHTML = "<h5>Childhood</h5>";
-    document.getElementById("birthstory").append("You were born " + backstory[3][1] + ". ");
+    $( "#birthstory" ).append("<p>You were born " + backstory[3][1] + ". </p>");
     
     if(backstory[4][0] != "Parents") {
-        document.getElementById("birthstory").append(backstory[4][1] + ". ");
+        $( "#birthstory" ).append("<p>" + backstory[4][1] + ". </p>");
         backstory.splice(4, 1);
     }
-    document.getElementById("birthstory").append(backstory[4][1] + " and you grew up " + backstory[5][1] + ". ");
+    $( "#birthstory" ).append("<p>" + backstory[4][1] + " and you grew up " + backstory[5][1] + ". </p>");
     
     if(backstory[8][0] != "ChildhoodMemories") {
-        document.getElementById("birthstory").append(backstory[8][1] + ". ");
+        $( "#birthstory" ).append("<p>" + backstory[8][1] + ". </p>");
 
         if(backstory[9][0] != "ChildhoodMemories") {
-            document.getElementById("birthstory").append("They " + backstory[9][1] + ". ");
+            $( "#birthstory" ).append("<p>They " + backstory[9][1] + ". </p>");
             backstory.splice(8, 1);
         }
 
         backstory.splice(8, 1);
     }
 
-    document.getElementById("birthstory").append(backstory[8][1] + ". ");
+    $( "#birthstory" ).append("<p>" + backstory[8][1] + ". </p>");
     
     document.getElementById("lifestory").innerHTML = "<h5>Background</h5>";
-    document.getElementById("lifestory").append("You live " + backstory[6][1] + " " + backstory[7][1] + ". ");
-    document.getElementById("lifestory").append("Your occupation is being a " + backstory[9][1] + ". " + backstory[10][1] + " ");
+    $( "#lifestory" ).append("<p>You live " + backstory[6][1] + " " + backstory[7][1] + ". </p>");
+    $( "#lifestory" ).append("<p>Your occupation is being a " + backstory[9][1] + ". " + backstory[10][1] + " </p>");
 
-    document.getElementById("lifestory").append(backstory[11][1]);
+    $( "#lifestory" ).append("<p>" + backstory[11][1] + "</p>");
 
     var arrayLength = backstory.length - 1;
     if(backstory[arrayLength][0] != "LifeEvents") {
-        document.getElementById("lifestory").append(" (" + backstory[arrayLength][1] + ")");
+        $( "#lifestory" ).append("<p> (" + backstory[arrayLength][1] + ")</p>");
     }
 }
 

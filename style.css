@@ -6,9 +6,21 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
     background: url(https://media.dnd.wizards.com/00_Volos_adventurers_1920x1080_WallpaperTemplate.jpg);
     background-size: cover;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 14px;
+
 }
 
 #wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row; 
+    overflow: scroll;
+}
+
+.randomizer {
     height: 100%;
     width: 100%;
     display: flex;
@@ -36,9 +48,8 @@ html, body {
 
 #box {
     display: none;
-    width: 90%;
-    height: auto;
-    min-height: 80%;
+    width: 95%;
+    height: 95%;
     margin: auto;
 }
 
@@ -56,6 +67,18 @@ html, body {
     background-color: #ffffff8f;
     height: 100%;
     width: 50%;
+}
+
+#backgroundInfo p {
+    font-size: 15px;
+    display: inline;
+}
+
+#backgroundInfo h2 {
+    margin: 5px 0 0 0;
+    padding: 0;
+    background: none;
+    font-weight: 100;
 }
 
 h1 {
@@ -118,27 +141,6 @@ h5 {
     padding: 0;
 }
 
-#levelCounter {
-    background-color: white;
-    box-shadow: 0px 0px 4px black;
-    color: black;
-    position: absolute;
-    font-size: 30px;
-    margin-left: -25px;
-    margin-top: -25px;
-    width: 60px;
-    text-align: center;
-    height: 60px;
-    border-radius: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-#levelCounter p {
-    display: block;
-    margin: auto;
-}
-
 #abilityScores {
     display: flex;
     width: 99%;
@@ -158,4 +160,77 @@ h5 {
     margin: 10px;
     background-color: #ffffff;
     box-shadow: 0px 0px 3px #999999;
+}
+
+.projectInformation {
+    background-color: rgba(255, 255, 255, 0.808);
+    width: 40%;
+    height: 100%;
+    min-width: 350px;
+    max-width: 500px;
+    position: relative;
+    display: flex;
+    overflow: scroll;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.projectInformation > div {
+    padding: 15px;
+}
+
+.projectInformation h2 {
+    margin: 5px 0 0 0;
+    padding: 0;
+    background: none;
+    font-weight: 100;
+}
+
+.projectInformation h3 {
+    font-weight: 100;
+}
+
+.projectInformation p {
+    margin: 5px 0 10px 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+.projectInformation ul {
+    margin-left: 20px;
+    margin-top: 7px;
+    padding: 0;
+    font-size: 15px;
+}
+
+.projectInformation li {
+    margin-bottom: 5px;
+}
+
+.projectInformation a {
+    color: #14488d;
+    font-weight: 600 !important;
+    text-decoration: none;
+}
+
+.projectInformation a:hover {
+    text-decoration: underline;
+}
+
+#showinfo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index: 10;
+    background-color: #fffb1c;
+    color: black;
+    padding: 10px;
+    outline: none;
+    cursor: pointer;
+    border: none;
+    font-size: 13px;
+}
+
+#showinfo:hover {
+    background-color: #ffda0a;
 }
