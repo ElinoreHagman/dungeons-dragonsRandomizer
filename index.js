@@ -123,7 +123,7 @@ function showInfo() {
         document.getElementById("birthstory").append(backstory[4][1] + ". ");
         backstory.splice(4, 1);
     }
-    document.getElementById("birthstory").append(backstory[4][1] + " and you live " + backstory[5][1] + ". ");
+    document.getElementById("birthstory").append(backstory[4][1] + " and you grew up " + backstory[5][1] + ". ");
     
     if(backstory[8][0] != "ChildhoodMemories") {
         document.getElementById("birthstory").append(backstory[8][1] + ". ");
@@ -136,10 +136,10 @@ function showInfo() {
         backstory.splice(8, 1);
     }
 
-    document.getElementById("birthstory").append("You live " + backstory[6][1] + " " + backstory[7][1] + ". ");
     document.getElementById("birthstory").append(backstory[8][1] + ". ");
     
     document.getElementById("lifestory").innerHTML = "<h5>Background</h5>";
+    document.getElementById("lifestory").append("You live " + backstory[6][1] + " " + backstory[7][1] + ". ");
     document.getElementById("lifestory").append("Your occupation is being a " + backstory[9][1] + ". " + backstory[10][1] + " ");
 
     document.getElementById("lifestory").append(backstory[11][1]);
