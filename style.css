@@ -229,6 +229,7 @@ h5 {
     cursor: pointer;
     border: none;
     font-size: 13px;
+    display: none;
 }
 
 #showinfo:hover {
