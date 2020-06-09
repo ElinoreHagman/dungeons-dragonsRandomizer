@@ -4,6 +4,7 @@
         <meta charset="8-UTF">
         <title>Dungeons And Dragons Creation</title>
         <link rel="stylesheet" type="text/css" href="style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-latest.js"></script>
         <script defer src="index.js" charset="utf-8"></script>
         <script defer type="text/javascript" src="backstory.js"></script> 
@@ -15,10 +16,34 @@
             <button id="showinfo">Project info</button>
 
             <section class="randomizer">
-            <button id="button">Randomize character</button>
+
+            <div id="button" class="button">
+
+                <div class="button-icon">
+                    <img src="images/dice.svg">
+                </div>
+
+                <div class="button-text">
+                    Randomize D&D character
+                </div>
+
+            </div>
 
             <div id="wait">
-                <h3>Wait a second..</h3>
+                <img src="images/dice.svg">
+                <h3 id="wait-text">Rolling some dices..</h3>
+            </div>
+
+            <div id="button2" style="display: none;" class="button">
+
+                <div class="button-icon">
+                    <img src="images/dice.svg">
+                </div>
+
+                <div class="button-text">
+                    Start over
+                </div>
+
             </div>
 
             <div id="box">
@@ -65,7 +90,7 @@
             </div>
         </section>
 
-        <section style="display: flex" class="projectInformation">
+        <section class="projectInformation">
             <div>
             <h2>Project description</h2>
 
@@ -83,7 +108,7 @@
             <h2>What is left to do:</h2>
             <ul>
                 <li><strike>Extra languages, proficiences and traits need to be picked depending on the race that gets picked.</strike></li>
-                <li>Button to allow a new randomized character to be made, in this version you need to reload page.</li>
+                <li><strike>Button to allow a new randomized character to be made,</strike> in this version you need to reload page.</li>
                 <li>Present static information (like saving throws, hit die, spellcasting ability etc.) in the character sheet.</li>
                 <li>Make it possible to export a PDF character sheet with all information.</li>
                 <li>Update the design to make it look hella fresh and mobile friendly.</li>
@@ -92,7 +117,6 @@
         <div>
             <h3>Repository is at my <a href="https://github.com/ElinoreHagman/dungeons-dragonsRandomizer" target="_blank">github</a></h3>
             <h3>Visit my website at <a href="https://www.elinorehagman.se/" target="_blank">elinorehagman.se</a></h3>
-
         </div>
         </section>
 

@@ -16,11 +16,34 @@ var backstory = [];
 var traits = [];
 
 $("#button").click(function () {
-    $("#button").css({ display: "none" });
-    $("#wait").css({ display: "block" });
-    document.body.style.cursor = "wait";
-    main();
+    $("#button").fadeToggle(300, function() {
+        $("#wait").fadeToggle();
+    });
+
+    setTimeout(changeText, 1900);
+
 });
+
+$("#button2").click(function () {
+
+    location.reload();
+});
+
+function changeText() {
+
+    var text = ["Reading the Player's Handbook..", "Trying out the fireball spell..", "Preparing the character sheet while on fire.."];
+
+    for (var i = 0; i < 3; ++i) {
+
+        (function(index) {
+          setTimeout(function() { 
+            document.getElementById("wait-text").innerHTML = text[index];
+          }, i * 1900);
+        })(i);
+    }
+
+    setTimeout(main, 1900);
+}
 
 $("#showinfo").click(function () {
     $(".projectInformation").slideToggle();
@@ -41,14 +64,14 @@ function main() {
             getAge();
             getLanguages();
             getTraits();
-            setTimeout(showInfo, 2000);
+            setTimeout(showInfo, 4000);
         });
     });    
 }
 
 function showInfo() {
 
-    document.body.style.cursor = "default";
+    $("#button2").fadeToggle(300);
     $("#box").css({ display: "flex" });
     $("#wait").css({ display: "none" });
 
@@ -164,7 +187,7 @@ function showInfo() {
 
 var getRace = $.getJSON('https://www.dnd5eapi.co/api/races', function (json) {
     var races = [];
-
+    console.log();
     $(json.results).each(function (i) {
         races.push(json.results[i].index);
     });

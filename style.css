@@ -4,7 +4,7 @@ html, body {
     margin: 0;
     background-color: #999999;
     font-family: Arial, Helvetica, sans-serif;
-    background: url(https://media.dnd.wizards.com/00_Volos_adventurers_1920x1080_WallpaperTemplate.jpg);
+    background: url(https://media.dnd.wizards.com/DragonPlus11_1280x960_WallpaperTemplate.jpg);
     background-size: cover;
     font-family: 'Noto Sans', sans-serif;
     font-size: 14px;
@@ -33,17 +33,75 @@ html, body {
     display: none;
 }
 
-#button {
-    height: 100px;
-    width: 400px;
-    border-radius: 5px;
-    background-color: #ffffff;
-    border: 2px solid rgb(76, 95, 116);
-    font-size: 30px;
-    cursor: pointer;
-    margin: auto;
+#wait img {
     display: block;
+    margin: auto;
+    margin-bottom: 10px;
+    width: 40px;
+    animation: rollDice 2s infinite;
+}
+
+@keyframes rollDice {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.button {
+    height: 90px;
+    width: 460px;
+    background-image: linear-gradient(to left, rgb(65, 60, 60), rgb(99, 90, 94), rgb(136, 103, 103), rgb(141, 93, 93), rgb(138, 54, 54));
+    margin: auto;
     cursor: pointer;
+    -webkit-clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+    display: flex;
+    border-bottom: 4px solid rgb(53, 65, 73);
+}
+
+#button2 {
+    display: flex;
+    width: 300px;
+}
+
+.button:hover > .button-icon img {
+    animation: rollDiceOnce 0.8s linear;
+}
+
+@keyframes rollDiceOnce {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.button-icon {
+    width: auto;
+    padding: 0 10px 0 60px;
+    display: flex;
+}
+
+.button-icon img {
+    display: block;
+    margin: auto;
+    height: 50px;
+    filter: invert(100%) sepia(4%) saturate(571%) hue-rotate(175deg) brightness(96%) contrast(98%);
+}
+
+.button-text {
+    width: 100%;
+    color: #F0F1F2;
+    padding-left: 10px;
+    line-height: 100px;
+    text-transform: uppercase;
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
 }
 
 #box {
