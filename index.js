@@ -12,6 +12,8 @@ var spellList = [];
 var languages = [];
 //Backstory
 var backstory = [];
+//Traits
+var traits = [];
 
 $("#button").click(function () {
     $("#button").css({ display: "none" });
@@ -38,10 +40,10 @@ function main() {
             getSpellcasting();
             getAge();
             getLanguages();
+            getTraits();
             setTimeout(showInfo, 2000);
         });
-    });
-    
+    });    
 }
 
 function showInfo() {
@@ -86,6 +88,12 @@ function showInfo() {
         var language = document.createElement("h4");
         language.innerHTML = languages[j];
         document.getElementById("languages").appendChild(language);
+    }
+
+    for(var j = 0; j < traits.length; j++) {
+        var trait = document.createElement("h4");
+        trait.innerHTML = traits[j];
+        document.getElementById("traits").appendChild(trait);
     }
 
     for(var s in spellList) {
@@ -360,6 +368,8 @@ function getProficiencies() {
             }
         });
     });
+
+    getExtraProficiencies();
 }
 
 function getAge() {
@@ -439,8 +449,6 @@ function getStartingEquipment() {
         });
     });
 }
-
-// Humans/Half-elfs får välja extra språk, dvärgar får välja extra proficiencies, dragonborns får välja extra traits
 
 function getSpellcasting() {
 
@@ -537,6 +545,77 @@ function getExtraLanguages() {
 
                     languages.push(theLanguages[randIndex]);
                 }
+            }
+        }
+    });
+}
+
+function getExtraProficiencies() {
+
+    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+
+        if (json.hasOwnProperty('starting_proficiency_options')) {
+
+            var choose = json.starting_proficiency_options.choose;
+            var sumProficiencies = 0;
+            var theProficiencies = [];
+
+            $(json.starting_proficiency_options.from).each(function (i) {
+                sumProficiencies++;
+                theProficiencies.push(json.starting_proficiency_options.from[i].name);
+            });
+
+            for(var i = 0; i < choose; i++) {
+
+                var randIndex = Math.floor(Math.random() * theProficiencies.length);
+
+                if(!proficiencies.includes(theProficiencies[randIndex])) {
+
+                    proficiencies.push(theProficiencies[randIndex]);
+                }
+            }
+        }
+    });
+}
+
+function getTraits() {
+
+    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+
+        $(json.traits).each(function (i) {
+            traits.push(json.traits[i].name);
+        });
+    });
+
+    if(character_base["Race"] == "dragonborn") {
+        getExtraTraits();
+    }
+}
+
+function getExtraTraits() {
+
+    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+
+        if (json.hasOwnProperty('trait_options')) {
+
+            var choose = json.trait_options.choose;
+            var sumTraits = 0;
+            var theTraits = [];
+
+            $(json.trait_options.from).each(function (i) {
+                sumTraits++;
+                theTraits.push(json.trait_options.from[i].name);
+            });
+
+            for(var i = 0; i < choose; i++) {
+
+                var randIndex = Math.floor(Math.random() * theTraits.length);
+
+                traits.push(theTraits[randIndex]);
+                
+                var removableIndex = traits.indexOf("Breath Weapon");
+                traits.splice(removableIndex, 1);
+
             }
         }
     });
