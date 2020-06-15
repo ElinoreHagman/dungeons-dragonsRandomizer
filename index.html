@@ -7,32 +7,32 @@
         <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-latest.js"></script>
         <script defer src="index.js" charset="utf-8"></script>
+        <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
         <script defer type="text/javascript" src="backstory.js"></script> 
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">    </head>
     <body>
 
         <div id="wrapper">
 
-            <button id="showinfo">Project info</button>
+            <section id="content-part1">
+                <div id="button" class="button">
 
-            <section class="randomizer">
-
-            <div id="button" class="button">
-
-                <div class="button-icon">
+                    <div class="button-icon">
+                        <img src="images/dice.svg">
+                    </div>
+    
+                    <div class="button-text">
+                        Randomize D&D character
+                    </div>
+    
+                </div>
+    
+                <div id="wait">
                     <img src="images/dice.svg">
+                    <h3 id="wait-text">Rolling some dices..</h3>
                 </div>
-
-                <div class="button-text">
-                    Randomize D&D character
-                </div>
-
-            </div>
-
-            <div id="wait">
-                <img src="images/dice.svg">
-                <h3 id="wait-text">Rolling some dices..</h3>
-            </div>
+            </section>
+            
 
             <div id="button2" style="display: none;" class="button">
 
@@ -45,79 +45,775 @@
                 </div>
 
             </div>
+            
+            <button id="showinfo">Project info</button>
 
-            <div id="box">
+            <section id="content-part2">
 
-                <div id="profileInfo">  
-
-                    <div id="title"></div>
-
-                    <div id="proficiences" class="box-style">
-                        <h3>Proficiences:</h3>
-                    </div>
-
-                    <div id="equipment" class="box-style">
-                        <h3>Starting equipment:</h3>
-                    </div>
-
-                    <div id="languages" class="box-style">
-                        <h3>Languages:</h3>
-                    </div>
-
-                    <div id="traits" class="box-style">
-                        <h3>Traits:</h3>
-                    </div>
-
-                    <div id="cantrips" class="box-style">
-                        <h3>Cantrips:</h3>
-                    </div>
-
-                    <div id="spells" class="box-style">
-                        <h3>Level 1 spells:</h3>
-                    </div>
-
-                    <div id="abilityScores"></div>
+                <div id="menu-area">
+                    <h2 id="menu-charactersheet">Character Sheet</h2>
+                    <h2 id="menu-backgroundinfo" class="passive">Background Info</h2>
                 </div>
 
-                <div id="backgroundInfo"> 
-                    
-                    <div id="firstline" class="story"></div>
-                    <div id="shortbio" class="story"></div>
-                    <div id="birthstory" class="story"></div>
-                    <div id="lifestory" class="story"></div>
+                <section class="character-sheet" id="character-sheet-info">
 
-                </div>
-            </div>
-        </section>
+                    <!-- Character basic information -->
+                    <section class="flex-container">
+
+                        <section class="flex-item item0">
+
+                            <article class="box">
+                                <input class="nameHeader" type="text" id="character-name" value="*Insert Name*">
+                            </article>
+
+                        </section>
+
+                        <section class="flex-item item0">
+
+                            <section class="background-line">
+                                <section class="info-cluster">
+
+                                    <article class="person-information">
+        
+                                        <div class="person-content">
+                                            <input class="infoInput" type="text" id="character-class" value="">
+                                        </div>
+            
+                                        <div class="person-content">
+                                            <h4>Class & Level</h4>
+                                        </div>
+            
+                                    </article>
+            
+                                    <article class="person-information">
+            
+                                        <div class="person-content">
+                                            <input class="infoInput" type="text" id="character-background" value="">
+                                        </div>
+            
+                                        <div class="person-content">
+                                            <h4>Background</h4>
+                                        </div>
+            
+                                    </article>
+        
+                                </section>   
+        
+                                <section class="info-cluster">
+        
+                                    <article class="person-information">
+        
+                                        <div class="person-content">
+                                            <input class="infoInput" type="text" id="character-race" value="">
+                                        </div>
+            
+                                        <div class="person-content">
+                                            <h4>Race</h4>
+                                        </div>
+            
+                                    </article>
+            
+                                    <article class="person-information">
+            
+                                        <div class="person-content">
+                                            <input class="infoInput" type="text" id="character-alignment" value="">
+
+                                        </div>
+            
+                                        <div class="person-content">
+                                            <h4>Alignment</h4>
+                                        </div>
+            
+                                    </article>
+        
+                                </section> 
+                            </section>
+    
+
+                        </section>
+
+                    </section>
+
+                    <!-- Character stats top -->
+                    <section class="flex-container">
+
+                        <section class="flex-item item1">
+
+                            <article class="score-box">
+                                <h1>Strength</h1>
+                                <input class="h2" type="text" id="modifier-str" value="">
+                                <div class="score-circle">
+                                    <input class="h3" type="text" id="character-str" value="">
+                                </div>
+                            </article>
+
+                            <article class="score-box">
+                                <h1>Dexterity</h1>
+                                <input class="h2" type="text" id="modifier-dex" value="">
+                                <div class="score-circle">
+                                    <input class="h3" type="text" id="character-dex" value="">
+                                </div>
+                            </article>
+
+                            <article class="score-box">
+                                <h1>Constitution</h1>
+                                <input class="h2" type="text" id="modifier-con" value="">
+                                <div class="score-circle">
+                                    <input class="h3" type="text" id="character-con" value="">
+                                </div>
+                            </article>
+
+                            <article class="score-box">
+                                <h1>Intelligence</h1>
+                                <input class="h2" type="text" id="modifier-int" value="">
+                                <div class="score-circle">
+                                    <input class="h3" type="text" id="character-int" value="">
+                                </div>
+                            </article>
+
+                            <article class="score-box">
+                                <h1>Wisdom</h1>
+                                <input class="h2" type="text" id="modifier-wis" value="">
+                                <div class="score-circle">
+                                    <input class="h3" type="text" id="character-wis" value="">
+                                </div>
+                            </article>
+
+                            <article class="score-box">
+                                <h1>Charisma</h1>
+                                <input class="h2" type="text" id="modifier-cha" value="">
+                                <div class="score-circle">
+                                    <input class="h3" type="text" id="character-cha" value="">
+                                </div>
+                            </article>
+
+                        </section>
+
+                        <section class="flex-item item2">
+
+                            <article class="inspiration">
+                                <div class="box-square">
+                                    <input type="checkbox">
+                                </div>
+                                <div class="box-header">
+                                    <h1>Inspiration</h1>
+                                </div>
+                            </article>
+
+                            <article class="long-box-with-circle">
+                                <div class="box-circle">
+                                    <input class="h2" type="text" id="proficiency-bonus" value="2">
+                                </div>
+                                <div class="box-header">
+                                    <h1>Proficiency bonus</h1>
+                                </div>
+                            </article>
+
+                            <article class="proficiency-box">
+
+                                <div class="prof-row">
+                                    <input class="prof-circle" id="checkbox-str" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5" type="text" id="saving-str" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Strength</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row">
+                                    <input class="prof-circle" id="checkbox-dex" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5" type="text" id="saving-dex" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Dexterity</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row">
+                                    <input class="prof-circle" id="checkbox-con" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5" type="text" id="saving-con" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Constitution</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row">
+                                    <input class="prof-circle" id="checkbox-int" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5" type="text" id="saving-int" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Intelligence</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row">
+                                    <input class="prof-circle" id="checkbox-wis" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5" type="text" id="saving-wis" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Wisdom</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row">
+                                    <input class="prof-circle" id="checkbox-cha" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5" type="text" id="saving-cha" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Charisma</h4>
+                                    </div>
+                                </div>
+
+                                <div class="description">
+                                    <h1>Saving throws</h1>
+                                </div>
+
+                            </article>
+
+                            <article class="proficiency-box">
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-acrobatics" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 dexterity skills-number" type="text" id="skills-acrobatics" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Acrobatics (Dex)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-animal" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 wisdom skills-number" type="text" id="skills-animal" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Animal Handling (Wis)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-arcana" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 intelligence skills-number" type="text" id="skills-arcana" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Arcana (Int)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-athletics" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 strength skills-number" type="text" id="skills-athletics" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Athletics (Str)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-deception" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 charm skills-number" type="text" id="skills-deception" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Deception (Cha)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-history" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 intelligence skills-number" type="text" id="skills-history" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>History (Int)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-insight" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 wisdom skills-number" type="text" id="skills-insight" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Insight (Wis)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-intimidation" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 charm skills-number" type="text" id="skills-intimidation" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Intimidation (Cha)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-investigation" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 intelligence skills-number" type="text" id="skills-investigation" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Investigation (Int)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-medicine" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 wisdom skills-number" type="text" id="skills-medicine" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Medicine (Wis)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-nature" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 wisdom skills-number" type="text" id="skills-nature" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Nature (Int)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-perception" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 wisdom skills-number" type="text" id="skills-perception" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Perception (Wis)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-performance" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 charm skills-number" type="text" id="skills-performance" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Performance (Cha)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-persuasion" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 charm skills-number" type="text" id="skills-persuasion" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Persuasion (Int)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-religion" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 charm skills-number" type="text" id="skills-religion" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Religion (Int)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-sleight" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 dexterity skills-number" type="text" id="skills-sleight" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Sleight of Hand (Dex)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-stealth" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 dexterity skills-number" type="text" id="skills-stealth" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Stealth (Dex)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="prof-row prof-list">
+                                    <input class="prof-circle skills-item" id="checkbox-survival" type="checkbox">
+                                    <div class="prof-input">
+                                        <input class="h5 wisdom skills-number" type="text" id="skills-survival" value="">
+                                    </div>
+                                    <div class="prof-text">
+                                        <h4>Survival (Wis)</h4>
+                                    </div>
+                                </div>
+
+                                <div class="description">
+                                    <h1>Skills</h1>
+                                </div>
+
+                            </article>
+
+                        </section>
+
+                        <section class="flex-item item3">
+
+                            <section class="horizontal-group">
+
+                                <div class="box-xl">
+                                    <input class="h2" type="text" id="armorclass-input" value="">
+                                    <h1>Armor Class</h1>
+                                </div>
+
+                                <div class="box-xl">
+                                    <input class="h2" type="text" id="initiative-input" value="">
+                                    <h1>Initiative</h1>
+                                </div>
+
+                                <div class="box-xl">
+                                    <input class="h2" type="text" id="speed-input" value="">
+                                    <h1>Speed</h1>
+                                </div>
+
+                            </section>
+
+                            <article class="box">
+
+                                <div class="hitpoints-content">
+                                    <h4>Hit Point Maximum</h5>
+                                    <div class="text-line">
+                                        <input class="h4" type="text" id="maxHitpoints" value="">
+                                    </div>
+                                </div>
+
+                                <div class="box-text">
+                                    <input class="h2" type="number" id="currentHitpoints" value="">
+                                </div>
+
+                                <div class="description">
+                                    <h1>Current Hit Points</h1>
+                                </div>
+
+                            </article>
+
+                            <article class="box">
+                                <div class="box-text">
+                                    <input class="h2" type="number" id="temporaryHitpoints" value="">
+                                </div>
+                                <div class="description">
+                                    <h1>Temporary Hit Points</h1>
+                                </div>
+
+                            </article>
+
+                            <section class="horizontal-group">
+
+                                <article class="box-2">
+                                    
+                                    <div class="information-content">
+                                        <h4>Total</h5>
+                                        <div class="text-line">
+                                            <input class="h4" type="text" id="totalHitdice" value="1">
+                                        </div>
+                                    </div>
+                
+                                    <div class="box-text">
+                                        <input class="h2" type="number" id="currentHitDice" value="1">
+                                    </div>
+            
+                                    <div class="description flex-row">
+                                        <h1>Hit Dice</h1>
+                                        <select name="hitdice" id="hitdice">
+                                        <option value="D4">D4</option>
+                                        <option value="D6">D6</option>
+                                        <option value="D8">D8</option>
+                                        <option value="D10">D10</option>
+                                        <option value="D12">D12</option>
+                                        </select>
+
+                                    </div>
+
+                                </article>
+
+                                <article class="box-2 flex-stretch">
+                                    
+                                    <div class="triad">
+
+                                        <div class="triad-header">
+                                            <h4>Successes</h4>
+                                        </div>
+
+                                        <input type="checkbox" class="triad-circle">
+                                        <input type="checkbox" class="triad-circle">
+                                        <input type="checkbox" class="triad-circle">
+
+                                    </div>
+
+                                    <div class="triad">
+
+                                        <div class="triad-header">
+                                            <h4>Failures</h4>
+                                        </div>
+
+                                        <input type="checkbox" class="triad-circle">
+                                        <input type="checkbox" class="triad-circle">
+                                        <input type="checkbox" class="triad-circle">
+
+                                    </div>
+                
+                                    <div class="description">
+                                        <h1>Death Saves</h1>
+                                    </div>
+
+                                </article>
+
+                            </section>
+
+                            <article class="box weapon-list" id="weapon-list">
+
+                                <div class="list-item">
+                                    <div class="list-name">
+                                        <h4><grey>Name</grey></h4>
+                                    </div>
+                                    <div class="list-bonus">
+                                        <h4><grey>Atk</grey></h4>
+                                    </div>
+                                    <div class="list-attack">
+                                        <h4><grey>Damage/Type</grey></h4>
+                                    </div>
+                                </div>
+
+                            </article>
+
+                        </section>
+
+                        <section class="flex-item item4">
+
+                            <section>
+                                <article class="box">
+
+                                    <textarea class="textarea"></textarea>
+                                    <div class="description nomargin">
+                                        <h1>Personality Traits</h1>
+                                    </div>
+                                </article>
+            
+                                <article class="box">
+                                    <textarea class="textarea"></textarea>
+                                    <div class="description nomargin">
+                                        <h1>Ideals</h1>
+                                    </div>
+                                </article>
+            
+                                <article class="box">
+                                    <textarea class="textarea"></textarea>
+                                    <div class="description nomargin">
+                                        <h1>Bonds</h1>
+                                    </div>
+                                </article>
+            
+                                <article class="box">
+                                    <textarea class="textarea"></textarea>
+                                    <div class="description nomargin">
+                                        <h1>Flaws</h1>
+                                    </div>
+                                </article>
+                            </section>
+
+                                <article class="box box-absolute">
+                                    
+                                    <div class="trait-list" id="trait-list">
+
+                                    </div>
+            
+                                    <div class="description nomargin">
+                                        <h3>Features & Traits</h3>
+                                    </div>
+                                </article>
+
+                        </section>
+
+                    </section>
+
+                    <!-- Character stats bottom -->
+                    <section class="flex-container">
+                        
+                        <section class="flex-item item5">
+
+                            <article class="long-box-with-circle">
+                                <div class="box-circle">
+                                    <input class="h2" type="text" id="passive-wisdom" value="">
+                                </div>
+                                <div class="box-header">
+                                    <h1>Passive Wisdom (Perception)</h1>
+                                </div>
+                            </article>
+
+                            <article class="box proficiency-list" id="proficiency-list">
+
+                                <div class="list-item">
+                                    <div class="list-type">
+                                        <h4><grey>Type</grey></h4>
+                                    </div>
+                                    <div class="list-info">
+                                        <h4><grey>Proficiency</grey></h4>
+                                    </div>
+                                </div>
+
+
+                            </article>
+
+                        </section>
+
+                        <section class="flex-item item6">
+
+                            <article class="box">
+
+                                <section class="item6-content">
+
+                                    <article class="left-side">
+                                        
+                                        <div class="money-box">
+                                            <div class="money-type">
+                                                <h4><grey>CP</grey></h4>
+                                            </div>
+                                            <div class="money-amount">
+                                                <input class="h3" id="coin-copper" type="text" value="">
+                                            </div>
+                                        </div>
+
+                                        <div class="money-box">
+                                            <div class="money-type">
+                                                <h4><grey>SP</grey></h4>
+                                            </div>
+                                            <div class="money-amount">
+                                                <input class="h3" id="coin-silver" type="text" value="">
+                                            </div>
+                                        </div>
+
+                                        <div class="money-box">
+                                            <div class="money-type">
+                                                <h4><grey>EP</grey></h4>
+                                            </div>
+                                            <div class="money-amount">
+                                                <input class="h3" id="coin-electrum" type="text" value="">
+                                            </div>
+                                        </div>
+
+                                        <div class="money-box">
+                                            <div class="money-type">
+                                                <h4><grey>GP</grey></h4>
+                                            </div>
+                                            <div class="money-amount">
+                                                <input class="h3" id="coin-gold" type="text" value="">
+                                            </div>
+                                        </div>
+
+                                        <div class="money-box">
+                                            <div class="money-type">
+                                                <h4><grey>PP</grey></h4>
+                                            </div>
+                                            <div class="money-amount">
+                                                <input class="h3" id="coin-platinum" type="text" value="">
+                                            </div>
+                                        </div>
+
+                                    </article>
+                
+                                    <article class="right-side" id="right-side">
+                                        
+                                        <div class="list-item">
+                                            <div class="list-name list-header">
+                                                <h4><grey>X</grey></h4>
+                                            </div>
+                                            <div class="list-bonus">
+                                                <h4><grey>Item Name</grey></h4>
+                                            </div>
+                                            <div class="list-attack list-header">
+                                                <h4><grey>Lb</grey></h4>
+                                            </div>
+                                        </div>
+
+                                    </article>
+
+                                </section>
+
+                                <div class="description">
+                                    <h3>Equipment</h3>
+                                </div>
+                            </article>
+
+                        </section>
+
+                    </section>
+
+                </section>
+
+                <section class="character-sheet" id="background-sheet-info">
+
+                    <!-- Background story -->
+                    <section class="flex-container">
+
+                        <section class="flex-item long-item">
+
+                            <article class="box">
+                                <h1>Background</h1>
+                                <textarea class="background-textarea">coming soon..</textarea>
+                            </article>
+
+                        </section>
+
+                        
+                    </section>
+
+                </section>
+
+            </section>
 
         <section class="projectInformation">
             <div>
             <h2>Project description</h2>
 
-            <p>This is a Dungeons & Dragons randomizer where a character is created for you to use in a campaign.
-                The randomizer is only covering what the official 5th Edition SRD allows, so only for example the basic classes
+            <p>This is a Dungeons & Dragons randomizer where a character sheet is created. Spice it up and try to manage a fully randomized character 
+                in a one-shot campaign, or get basic ideas and change stuff afterwards.
+                The randomizer is only covering what the official 5th Edition SRD has distributed, so only for example the basic classes
                 and races are avaliable.</p>
 
             <h2>How it works</h2>
                 <p>When randomizing a character the app fetches information from the
-                    <a href="https://www.dnd5eapi.co/" target="_blank">dnd5eapi.co</a> using JQUERY, and picks out random
-                    objects using the Math.Random() function. Subraces and subclasses have a 40% chance of being chosen.
-                    Backgrounds are picked from a generator at <a href="https://github.com/rushl/DnD-5e-Background" target="_blank">github.com/rushl</a> 
-                    with some code tweaking to fit this app.</p>
+                    <a href="https://www.dnd5eapi.co/" target="_blank">dnd5eapi.co</a> using jQuery, and picks out random
+                    objects using the Math.Random() function.
+                    Text regarding the backgrounds are picked from <a href="https://github.com/rushl/DnD-5e-Background" target="_blank">github.com/rushl</a>
+                    , but used with my own randomizer functions.</p>
 
             <h2>What is left to do:</h2>
             <ul>
-                <li><strike>Extra languages, proficiences and traits need to be picked depending on the race that gets picked.</strike></li>
-                <li><strike>Button to allow a new randomized character to be made,</strike> in this version you need to reload page.</li>
-                <li>Present static information (like saving throws, hit die, spellcasting ability etc.) in the character sheet.</li>
-                <li>Make it possible to export a PDF character sheet with all information.</li>
-                <li>Update the design to make it look hella fresh and mobile friendly.</li>
+                <li>Button to allow a new randomized character to be made.</li>
+                <li>Fix the occasional duplication of equipment.</li>
+                <li>Redo the function that randomizes the background and present the result.</li>
+                <li>Find a way to fetch and present spell information, which the api is lacking.</li>
+                <li>Make the whole thang mobile friendly.</li>
+                <li>Randomize names depending on race.</li>
+                <li>Maybe make it possible to export a PDF character sheet with the information.</li>
             </ul>
-        </div>
-        <div>
-            <h3>Repository is at my <a href="https://github.com/ElinoreHagman/dungeons-dragonsRandomizer" target="_blank">github</a></h3>
-            <h3>Visit my website at <a href="https://www.elinorehagman.se/" target="_blank">elinorehagman.se</a></h3>
-        </div>
+            </div>
+
+            <div>
+                <h3>Repository is at my <a href="https://github.com/ElinoreHagman/dungeons-dragonsRandomizer" target="_blank">github</a></h3>
+                <h3>Visit my website at <a href="https://www.elinorehagman.se/" target="_blank">elinorehagman.se</a></h3>
+            </div>
+
         </section>
 
         </div>

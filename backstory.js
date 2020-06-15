@@ -600,3 +600,19 @@ var Gender = {
 	"1": "male",
 	"2": "female"
 };
+
+var BackgroundGold = { 
+	"acolyte": "15",
+	"charlatan": "15",
+	"criminal & spy": "15",
+	"entertainer & gladiator": "15",
+	"folk Hero": "10",
+	"guild Artisan & guild Merchant": "15",
+	"hermit": "5",
+	"noble & knight": "25",
+	"outlander": "10",
+	"sage": "10",
+	"sailor & pirate": "10",
+	"soldier": "10",
+	"urchin": "10",
+};
