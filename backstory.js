@@ -1,108 +1,108 @@
 var Parents = { 
 	"Dice": "1d100",
-	"01-95": "You know who your parents are or were",
-	"96-100": "You do not know who your parents were"
+	"01-90": "You know who your parents are or were. ",
+	"91-100": "You do not know who your parents were. "
 };
 
 var HalfElfParents = { 
 	"Dice": "1d8",
-	"1-5": "One parent was an elf and the other was a human",
-	"6": "One parent was an elf and the other was a half-elf",
-	"7": "One parent was a human and the other was a half-elf",
-	"8": "Both parents were half-elves"
+	"1-5": "One parent was an elf and the other was a human. ",
+	"6": "One parent was an elf and the other was a half-elf. ",
+	"7": "One parent was a human and the other was a half-elf. ",
+	"8": "Both parents were half-elves. "
 };
 
 var TieflingParents = { 
 	"Dice": "1d8",
-	"1-4": "Both parents were humans, their infernal heritage dormant until you came along",
-	"5-6": "One parent was a tiefling and the other was a human",
-	"7": "One parent was a tiefling and the other was a devil",
-	"8": "One parent was a human and the other was a devil"
+	"1-4": "Both parents were humans, their infernal heritage dormant until you came along. ",
+	"5-6": "One parent was a tiefling and the other was a human. ",
+	"7": "One parent was a tiefling and the other was a devil. ",
+	"8": "One parent was a human and the other was a devil. "
 };
 
 var HalfOrcParents = { 
 	"Dice": "1d8",
-	"1-3": "One parent was an orc and the other was a human",
-	"4-5": "One parent was an orc and the other was a half-orc",
-	"6-7": "One parent was a human and the other was a half-orc",
-	"8": "Both parents were half-orcs"
+	"1-3": "One parent was an orc and the other was a human. ",
+	"4-5": "One parent was an orc and the other was a half-orc. ",
+	"6-7": "One parent was a human and the other was a half-orc. ",
+	"8": "Both parents were half-orcs. "
 };
 
 var Birthplace = { 
 	"Dice": "1d101",
-	"1-50": "at home",
-	"51-55": "in the home of a family friend",
-	"56-63": "in the home of a healer or midwife",
-	"64-65": "in a carriage, cart, or wagon",
-	"66-68": "in a barn, shed, or other outbuilding",
-	"69-70": "in a cave",
-	"71-72": "in a field",
-	"73-74": "in a forest",
-	"75-77": "in a temple",
-	"78-78": "on a battlefield",
-	"79-80": "in an alley or street",
-	"81-82": "in a brothel, tavern, or inn",
-	"83-84": "in a castle, keep, tower, or palace",
-	"85-85": "in a sewer or rubbish heap",
-	"86-88": "among people of a different race",
-	"89-91": "on board a boat or a ship",
-	"92-93": "in a prison or in the headquarters of a secret organization",
-	"94-95": "in a sage's laboratory",
-	"96-96": "in the Feywild",
-	"97-97": "in the Shadowfell",
-	"98-98": "on the Astral Plane or the Ethereal Plane",
-	"99-99": "on an Inner Plane of your choice",
-	"100-101": "on an Outer Plane of your choice"
+	"1-50": "at home. ",
+	"51-55": "in the home of a family friend. ",
+	"56-63": "in the home of a healer or midwife. ",
+	"64-65": "in a carriage, cart, or wagon. ",
+	"66-68": "in a barn, shed, or other outbuilding. ",
+	"69-70": "in a cave. ",
+	"71-72": "in a field. ",
+	"73-74": "in a forest. ",
+	"75-77": "in a temple. ",
+	"78-78": "on a battlefield. ",
+	"79-80": "in an alley or street. ",
+	"81-82": "in a brothel, tavern, or inn. ",
+	"83-84": "in a castle, keep, tower, or palace. ",
+	"85-85": "in a sewer or rubbish heap. ",
+	"86-88": "among people of a different race. ",
+	"89-91": "on board a boat or a ship. ",
+	"92-93": "in a prison or in the headquarters of a secret organization. ",
+	"94-95": "in a sage's laboratory. ",
+	"96-96": "in the Feywild. ",
+	"97-97": "in the Shadowfell. ",
+	"98-98": "on the Astral Plane or the Ethereal Plane. ",
+	"99-99": "on an Inner Plane of your choice. ",
+	"100-101": "on an Outer Plane of your choice. "
 };
 
 var Family = { 
 	"Dice": "1d100",
-	"1-4": "without a family.#AbsentParents",
+	"1-4": "without a family#AbsentParents",
 	"5-10": "in an institution, such as an asylum",
 	"11-15": "in a temple",
 	"16-21": "in an orphanage.#AbsentParents",
 	"22-27": "with a guardian.#AbsentParents",
 	"28-35": "with your paternal or maternal aunt, uncle, or both; or extended family such as a tribe or clan",
-	"36-43": "with your paternal or maternal grandparent(s).#AbsentParents",
+	"36-43": "with your paternal or maternal grandparent(s)#AbsentParents",
 	"44-50": "with your adoptive family (same or different race)",
-	"51-69": "with your single father or stepfather.#AbsentMother",
-	"70-81": "with your single mother or stepmother.#AbsentFather",
-	"82-100": "with your mother and father."
+	"51-69": "with your single father or stepfather#AbsentMother",
+	"70-81": "with your single mother or stepmother#AbsentFather",
+	"82-100": "with your mother and father"
 };
 
 var AbsentParents = { 
 	"Dice": "1d4",
-	"1-1": "Your parents died#CauseOfDeath",
-	"2-2": "Your parents were imprisoned, enslaved, or otherwise taken away",
-	"3-3": "Your parents abandoned you",
-	"4-4": "Your parents disappeared to an unknown fate"
+	"1-1": "your parents #CauseOfDeath",
+	"2-2": "your parents were imprisoned, enslaved, or otherwise taken away",
+	"3-3": "your parents abandoned you",
+	"4-4": "your parents disappeared to an unknown fate"
 };
 
 var AbsentFather = { 
 	"Dice": "1d4",
-	"1-1": "Your father died#CauseOfDeath",
-	"2-2": "Your father was imprisoned, enslaved, or otherwise taken away",
-	"3-3": "Your father abandoned you",
-	"4-4": "Your father disappeared to an unknown fate"
+	"1-1": "your father #CauseOfDeath",
+	"2-2": "your father was imprisoned, enslaved, or otherwise taken away",
+	"3-3": "your father abandoned you",
+	"4-4": "your father disappeared to an unknown fate"
 };
 
 var AbsentMother = { 
 	"Dice": "1d4",
-	"1-1": "Your mother died#CauseOfDeath",
-	"2-2": "Your mother was imprisoned, enslaved, or otherwise taken away",
-	"3-3": "Your mother abandoned you",
-	"4-4": "Your mother disappeared to an unknown fate"
+	"1-1": "your mother #CauseOfDeath",
+	"2-2": "your mother was imprisoned, enslaved, or otherwise taken away",
+	"3-3": "your mother abandoned you",
+	"4-4": "your mother disappeared to an unknown fate"
 };
 
 var Lifestyle = { 
 	"Dice": "1d50",
-	"1-5": "wretchedly",
-	"6-13": "in squalor",
-	"14-22": "poor",
-	"23-39": "modestly",
-	"40-51": "comfortably",
-	"52-60": "wealthy",
-	"45-50": "aristocratically"
+	"1-5": "wretchedly ",
+	"6-13": "in squalor ",
+	"14-22": "poor ",
+	"23-39": "modestly ",
+	"40-51": "comfortably ",
+	"52-60": "wealthy ",
+	"45-50": "aristocratically "
 };
 
 var Home = { 
@@ -234,7 +234,7 @@ var noble = {
 	"1": "You come from an old and storied family, and it fell to you to preserve the family name.",
 	"2": "Your family has been disgraced, and you intend to clear our name.",
 	"3": "Your family recently came by its title, and that elevation thrust us into a new and strange world.",
-	"4": "Your family has a title, but none of your ancestors have distinguished themselves since we gained it.",
+	"4": "Your family has a title, but none of your ancestors have distinguished themselves since they gained it.",
 	"5": "Your family is filled with remarkable people. You hope to live up to their example.",
 	"6": "You hope to increase your family's power and influence."
 };
@@ -244,7 +244,7 @@ var knight = {
 	"1": "You come from an old and storied family, and it fell to you to preserve the family name.",
 	"2": "Your family has been disgraced, and you intend to clear our name.",
 	"3": "Your family recently came by its title, and that elevation thrust us into a new and strange world.",
-	"4": "Your family has a title, but none of your ancestors have distinguished themselves since we gained it.",
+	"4": "Your family has a title, but none of your ancestors have distinguished themselves since they gained it.",
 	"5": "Your family is filled with remarkable people. You hope to live up to their example.",
 	"6": "You hope to increase your family's power and influence."
 };
@@ -304,7 +304,7 @@ var urchin = {
 	"1": "Wanderlust caused you to leave your family to see the world. You look after yourself.",
 	"2": "You ran away from a bad situation at home and made your own way in the world.",
 	"3": "Monsters wiped out your village, and you were the sole survivor. You had to find a way to survive.",
-	"4": "A notorious thief looked after you and other orphans, and we spied and stole to earn our keep.",
+	"4": "A notorious thief looked after you and other orphans, and you spied and stole to earn our keep.",
 	"5": "One day you woke up on the streets, alone and hungry, with no memory of your early childhood.",
 	"6": "Your parents died, leaving no one to look after you. You raised yourself."
 };
@@ -554,7 +554,7 @@ var Alignment = {
 	"41-54": "neutral good",
     "55-63": "lawful good",
     "64-76": "lawful neutral",
-    "78-89": "chaotic good",
+    "77-89": "chaotic good",
     "90-100": "chaotic neutral"
 };
 

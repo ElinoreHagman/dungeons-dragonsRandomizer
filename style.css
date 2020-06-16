@@ -44,15 +44,30 @@ html, body {
     pointer-events: none;
 }
 
-.passive {
+.passivec {
     z-index: 0 !important;
-    background-color: rgb(123, 169, 255) !important;
+    background-image: linear-gradient(to left, #7ba9ff, #6697eb, #5185d7, #3a73c3, #1e62b0) !important;
     pointer-events: all !important;
+    color: white;
 }
 
-.passive:hover {
+.passivec:hover {
     cursor: pointer;
-    background-color: rgb(154, 190, 255);
+    background-image: none;
+    background: #7BA9FF !important;
+}
+
+.passiveb {
+    z-index: 0 !important;
+    background-image: linear-gradient(to right, #7ba9ff, #6697eb, #5185d7, #3a73c3, #1e62b0) !important;
+    pointer-events: all !important;
+    color: white;
+}
+
+.passiveb:hover {
+    cursor: pointer;
+    background-image: none;
+    background: #7BA9FF !important;
 }
 
 #menu-backgroundinfo {
@@ -87,18 +102,6 @@ html, body {
     width: 100%;
 }
 
-.background-textarea {
-    outline: none;
-    width: 99%;
-    border: none;
-    display: block;
-    resize: none;
-    font-family: Arial, Helvetica, sans-serif;
-    min-height: 30px;
-    overflow-y: auto;
-    word-wrap:break-word;
-}
-
 #content-part1 {
     display: flex;
     margin: auto;
@@ -114,6 +117,7 @@ html, body {
     padding: 5px;
     flex-direction: row;
     min-width: 1050px;
+    max-width: 1050px;
     margin: 0px auto;
 }
 
@@ -122,7 +126,7 @@ html, body {
 }
 
 .flex-item {
-    background-color: rgb(211, 213, 224);
+    background-color: #e3edff;
     text-align: center;
     padding: 20px;
     font-size: 30px;
@@ -297,6 +301,14 @@ h1, h3 {
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
+}
+
+#background-text, #background-text2 {
+    text-align: left;
+    width: inherit;
+    padding: 20px 20px 0px 20px;
+    font-size: 16px;
+    display: block;
 }
 
 .box-square {
@@ -597,8 +609,11 @@ cursor: pointer;
 }
 
 .item4 section {
-    background-color: rgb(211, 213, 224);
+    position: relative;
+    background-color: #e3edff;
     padding: 20px;
+    height: 100%;
+    padding-bottom: 255px;
 }
 
 .item4 .box {
@@ -658,7 +673,7 @@ cursor: pointer;
 .box-absolute {
     position: absolute;
     min-width: 240px;
-    margin: 25px;
+    margin: 5px;
 }
 
 .item5 {
@@ -791,21 +806,56 @@ cursor: pointer;
 .button {
     height: 90px;
     width: 460px;
-    background-image: linear-gradient(to left, rgb(65, 60, 60), rgb(99, 90, 94), rgb(136, 103, 103), rgb(141, 93, 93), rgb(138, 54, 54));
+    background-image: linear-gradient(to left, #7ba9ff, #6697eb, #5185d7, #3a73c3, #1e62b0);
     margin: auto;
     cursor: pointer;
     -webkit-clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
     clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
     display: flex;
-    border-bottom: 4px solid rgb(53, 65, 73);
+    border-bottom: 4px solid #00428B;
 }
 
 #button2 {
-    display: none;
-    width: 300px;
+    height: 100px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    background-image: linear-gradient(to left, #7ba9ff, #6697eb, #5185d7, #3a73c3, #1e62b0);
+    cursor: pointer;
+    border-bottom: 4px solid #00428B;
+    border-radius: 100%;
+    justify-content: center;
+    position: absolute;
+    z-index: 20;
+    top: 110px;
+    margin-left: -50px;
+}
+
+.button-icon2 img {
+    display: block;
+    margin: auto;
+    height: 40px;
+    filter: invert(100%) sepia(4%) saturate(571%) hue-rotate(175deg) brightness(96%) contrast(98%);
+    margin-bottom: 8px;
+    margin-top: -7px;
+}
+
+.button-text2 {
+    display: block;
+    width: 100%;
+    color: #F0F1F2;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
 }
 
 .button:hover > .button-icon img {
+    animation: rollDiceOnce 3s infinite;
+}
+
+#button2:hover > .button-icon2 img {
     animation: rollDiceOnce 3s infinite;
 }
 

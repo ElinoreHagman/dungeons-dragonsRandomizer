@@ -8,7 +8,8 @@
         <script src="https://code.jquery.com/jquery-latest.js"></script>
         <script defer src="index.js" charset="utf-8"></script>
         <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
-        <script defer type="text/javascript" src="backstory.js"></script> 
+        <script defer type="text/javascript" src="backstory.js"></script>
+        <script defer type="text/javascript" src="names.js"></script> 
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">    </head>
     <body>
 
@@ -33,26 +34,25 @@
                 </div>
             </section>
             
-
-            <div id="button2" style="display: none;" class="button">
-
-                <div class="button-icon">
-                    <img src="images/dice.svg">
-                </div>
-
-                <div class="button-text">
-                    Start over
-                </div>
-
-            </div>
-            
             <button id="showinfo">Project info</button>
 
             <section id="content-part2">
 
+                <div id="button2">
+
+                    <div class="button-icon2">
+                        <img src="images/dice.svg">
+                    </div>
+    
+                    <div class="button-text2">
+                        Start over
+                    </div>
+    
+                </div>    
+
                 <div id="menu-area">
                     <h2 id="menu-charactersheet">Character Sheet</h2>
-                    <h2 id="menu-backgroundinfo" class="passive">Background Info</h2>
+                    <h2 id="menu-backgroundinfo" class="passiveb">Background Info</h2>
                 </div>
 
                 <section class="character-sheet" id="character-sheet-info">
@@ -63,7 +63,7 @@
                         <section class="flex-item item0">
 
                             <article class="box">
-                                <input class="nameHeader" type="text" id="character-name" value="*Insert Name*">
+                                <input class="nameHeader" type="text" id="character-name" value="">
                             </article>
 
                         </section>
@@ -629,7 +629,6 @@
                                         <h1>Flaws</h1>
                                     </div>
                                 </article>
-                            </section>
 
                                 <article class="box box-absolute">
                                     
@@ -641,6 +640,9 @@
                                         <h3>Features & Traits</h3>
                                     </div>
                                 </article>
+                            </section>
+
+                                
 
                         </section>
 
@@ -769,7 +771,8 @@
 
                             <article class="box">
                                 <h1>Background</h1>
-                                <textarea class="background-textarea">coming soon..</textarea>
+                                    <p id="background-text"></p>
+                                    <p id="background-text2"></p>
                             </article>
 
                         </section>
@@ -799,12 +802,11 @@
 
             <h2>What is left to do:</h2>
             <ul>
-                <li>Button to allow a new randomized character to be made.</li>
                 <li>Fix the occasional duplication of equipment.</li>
-                <li>Redo the function that randomizes the background and present the result.</li>
+                <li>Fetch and present class features.</li>
+                <li>Fix better async methods for a more stable runtime.</li>
                 <li>Find a way to fetch and present spell information, which the api is lacking.</li>
                 <li>Make the whole thang mobile friendly.</li>
-                <li>Randomize names depending on race.</li>
                 <li>Maybe make it possible to export a PDF character sheet with the information.</li>
             </ul>
             </div>
