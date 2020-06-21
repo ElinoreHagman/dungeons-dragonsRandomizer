@@ -8,6 +8,7 @@ var savingthrows = [];
 var skillproficiencies = [];
 // Rest of the proficiencies
 var proficiencies = [];
+var expertise;
 // [name, amount]
 var equipment = [];
 // attacks
@@ -92,6 +93,7 @@ function main() {
         getName();
 
         getClass.done(function () {
+            character_base["Class"] = "rogue";
             getAlignment();
             getOccupation();
             getHitDie();
@@ -174,10 +176,16 @@ function showInfo() {
                 var checkboxStatus = this.querySelector(".skills-item");
 
                 for(var skill in abilityScores) {
-                    if(itemContent.toLowerCase().includes(skill.toLowerCase())) {
-                        
+                    
+                    if(itemContent.toLowerCase().includes("(" + skill.toLowerCase() + ")")) {
+
                         if(document.getElementById(checkboxStatus.id).checked == true) {
+
                             inputField.value = parseInt(calculate(abilityScores[skill])) + parseInt(document.getElementById("proficiency-bonus").value);
+
+                            if(itemContent.includes(expertise.split(' ').pop())) {
+                                inputField.value = parseInt(inputField.value) + parseInt(document.getElementById("proficiency-bonus").value);
+                            }
 
                         } else {
                             inputField.value = calculate(abilityScores[skill]);
@@ -715,7 +723,7 @@ function getProficiencyType() {
 
         });
     }
-
+    getExpertise();
 }
 
 function getStartingEquipment() {
@@ -924,7 +932,18 @@ function getArmorDetails() {
     character_base["Armorclass"] = parseInt(biggestArmor) + parseInt(shield); 
 }
 
-//get expertise choices from class features as well
+function getExpertise() {
+    
+    if(character_base["Class"] == "rogue") {
+
+        randomIndex = Math.floor(Math.random() * skillproficiencies.length);
+
+        expertise = skillproficiencies[randomIndex];
+
+    }
+
+}
+
 function getFeatures() {
  
     let featureList = [];

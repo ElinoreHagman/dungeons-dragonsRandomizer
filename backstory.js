@@ -232,7 +232,7 @@ var hermit = {
 var noble = { 
 	"Dice": "1d6",
 	"1": "You come from an old and storied family, and it fell to you to preserve the family name.",
-	"2": "Your family has been disgraced, and you intend to clear our name.",
+	"2": "Your family has been disgraced, and you intend to clear your name.",
 	"3": "Your family recently came by its title, and that elevation thrust us into a new and strange world.",
 	"4": "Your family has a title, but none of your ancestors have distinguished themselves since they gained it.",
 	"5": "Your family is filled with remarkable people. You hope to live up to their example.",
@@ -242,7 +242,7 @@ var noble = {
 var knight = { 
 	"Dice": "1d6",
 	"1": "You come from an old and storied family, and it fell to you to preserve the family name.",
-	"2": "Your family has been disgraced, and you intend to clear our name.",
+	"2": "Your family has been disgraced, and you intend to clear your name.",
 	"3": "Your family recently came by its title, and that elevation thrust us into a new and strange world.",
 	"4": "Your family has a title, but none of your ancestors have distinguished themselves since they gained it.",
 	"5": "Your family is filled with remarkable people. You hope to live up to their example.",
@@ -251,22 +251,22 @@ var knight = {
 
 var outlander = { 
 	"Dice": "1d6",
-	"1": "who spent a lot of time in the wilderness as a youngster, and you came to love that way of life.",
-	"2": "who from a young age, you couldn't abide the stink of the cities and preferred to spend your time in nature.",
-	"3": "who came to understand the darkness that lurks in the wilds, and you vowed to combat it.",
-	"4": "and your people lived on the edges of civilization, and you learned the methods of survival from your family.",
-	"5": "and after a tragedy you retreated to the wilderness, leaving your old life behind.",
-	"6": "and your family moved away from civilization, and you learned to adapt to your new environment."
+	"1": "You spent a lot of time in the wilderness as a youngster, and you came to love that way of life.",
+	"2": "From a young age, you couldn't abide the stink of the cities and preferred to spend your time in nature.",
+	"3": "You came to understand the darkness that lurks in the wilds, and you vowed to combat it.",
+	"4": "Your people lived on the edges of civilization, and you learned the methods of survival from your family.",
+	"5": "After a tragedy you retreated to the wilderness, leaving your old life behind.",
+	"6": "Your family moved away from civilization, and you learned to adapt to your new environment."
 };
 
 var sage = { 
 	"Dice": "1d6",
-	"1": ". You were naturally curious, so you packed up and went to a university to learn more about the world.",
-	"2": "and your mentor's teachings opened your mind to new possibilities in that field of study.",
-	"3": "who were always an avid reader, and you learned much you about your favorite topic on your own.",
-	"4": "who discovered an old library and pored over the texts you found there. That experience awakened a hunger you for more knowledge.",
-	"5": "who impressed a wizard who told you you were squandering your talents and should seek out an education to take advantage of your gifts.",
-	"6": "and one of your parents or a relative gave you a basic education that whetted your appetite, and you left home to build on what you had learned."
+	"1": "You were naturally curious, so you packed up and went to a university to learn more about the world.",
+	"2": "Your mentor's teachings opened your mind to new possibilities in that field of study.",
+	"3": "You were always an avid reader, and you learned much you about your favorite topic on your own.",
+	"4": "You discovered an old library and pored over the texts you found there. That experience awakened a hunger for more knowledge.",
+	"5": "You impressed a wizard who told you you were squandering your talents and should seek out an education to take advantage of your gifts.",
+	"6": "One of your parents or a relative gave you a basic education that whetted your appetite, and you left home to build on what you had learned."
 };
 
 var sailor = { 
@@ -304,7 +304,7 @@ var urchin = {
 	"1": "Wanderlust caused you to leave your family to see the world. You look after yourself.",
 	"2": "You ran away from a bad situation at home and made your own way in the world.",
 	"3": "Monsters wiped out your village, and you were the sole survivor. You had to find a way to survive.",
-	"4": "A notorious thief looked after you and other orphans, and you spied and stole to earn our keep.",
+	"4": "A notorious thief looked after you and other orphans, and you spied and stole to earn your keep.",
 	"5": "One day you woke up on the streets, alone and hungry, with no memory of your early childhood.",
 	"6": "Your parents died, leaving no one to look after you. You raised yourself."
 };
@@ -401,7 +401,7 @@ var rogue = {
 
 var sorcerer = { 
 	"Dice": "1d6",
-	"1": "When you were born, all the water in the house froze solid. The milk spoiled, or all the iron turned to copper. My family is convinced that this event was a harbinger of stranger things to come for you.",
+	"1": "When you were born, all the water in the house froze solid. The milk spoiled, or all the iron turned to copper. Your family is convinced that this event was a harbinger of stranger things to come for you.",
 	"2": "You suffered a terrible emotional or physical strain, which brought forth your latent magical power. You have fought to control it ever since.",
 	"3": "Your immediate family never spoke of your ancestors, and when you asked, they would change the subject. It wasn't until you started displaying strange talents that the full truth of your heritage came out.",
 	"4": "When a monster threatened one of your friends, you became filled with anxiety. You lashed out instinctively and blasted the wretched thing with a force that came from within you.",
