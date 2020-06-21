@@ -52,6 +52,8 @@ $("#button").click(function () {
 
     setTimeout(changeText, 1900);
     main();
+
+
 });
 
 $("#button2").click(function () {
@@ -96,6 +98,7 @@ function main() {
             getSpellcasting();
             getSkillProficiencies();
             getProficiencies();
+            getFeatures();
 
             setTimeout(getStartingEquipment, 1000);
 
@@ -286,7 +289,11 @@ function showInfo() {
         var input2 = document.createElement("input");
         input2.className = "h6 weapon-bonus";
         input2.type = "text";
-        input2.value = attacks[item]["bonus"];
+        if(parseInt(attacks[item]["bonus"]) > 0 ) {
+            input2.value = "+" + attacks[item]["bonus"];
+        } else {
+            input2.value = attacks[item]["bonus"];
+        }
 
         var smallDiv3 = document.createElement("div");
         smallDiv3.className = "list-attack";
@@ -442,8 +449,12 @@ function getName() {
     var race = character_base["Race"]; 
     race = race.replace("-", "");
     var raceNames = window["name_" + race];
+    var raceSurnames = window["surname_" + race];
+
     var randIndex = Math.floor(Math.random() * raceNames.length);
-    character_base["Name"] = raceNames[randIndex];
+    var randIndex2 = Math.floor(Math.random() * raceSurnames.length);
+
+    character_base["Name"] = raceNames[randIndex] + " " + raceSurnames[randIndex2];
 
 }
 
@@ -777,12 +788,12 @@ function getStartingEquipment() {
 
 function getAttackDetails() {
 
-    for(var url in equipment) {
+    for(let url in equipment) {
 
         $.getJSON('https://www.dnd5eapi.co' + equipment[url][2], function (json) {
 
-        if(json.equipment_category == "Weapon") {
-
+        if(json.equipment_category.name == "Weapon") {
+         
             attacks.push ({
             "name" : json.name,
             "category" : json.weapon_category,
@@ -847,11 +858,11 @@ function getAttackDetails() {
 
 function getArmorclass() {
 
-    for(var url in equipment) {
+    for(let url in equipment) {
 
         $.getJSON('https://www.dnd5eapi.co' + equipment[url][2], function (json) {
 
-            if(json.equipment_category == "Armor") {
+            if(json.equipment_category.name == "Armor") {
 
                 armor.push ({
                 "name" : json.name,
@@ -866,7 +877,7 @@ function getArmorclass() {
         });
     }
 
-    getArmorDetails();
+    setTimeout(getArmorDetails, 500);
 }
 
 function getArmorDetails() {
@@ -911,6 +922,31 @@ function getArmorDetails() {
     }
 
     character_base["Armorclass"] = parseInt(biggestArmor) + parseInt(shield); 
+}
+
+//get expertise choices from class features as well
+function getFeatures() {
+ 
+    let featureList = [];
+
+    var getList = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
+        
+        $(json.features).each(function (i) {
+            featureList.push(json.features[i].url);
+        });
+    });
+
+    getList.done(function() {
+        
+        for(let f in featureList) {
+
+            $.getJSON('https://www.dnd5eapi.co' + featureList[f], function (json) {
+        
+                traits.push([json.name, json.desc[0]]);
+            });
+        }
+
+    });
 }
 
 function getSpellcasting() {

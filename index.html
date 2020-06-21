@@ -2,8 +2,12 @@
 <html lang="sv">
     <head>
         <meta charset="8-UTF">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dungeons And Dragons Creation</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <link rel="stylesheet" media="screen and (max-width: 1099px)" href="style_mobile.css">
+        <link rel="stylesheet" media="screen and (min-width: 1100px)" href="style.css">
+
         <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-latest.js"></script>
         <script defer src="index.js" charset="utf-8"></script>
@@ -12,7 +16,8 @@
         <script defer type="text/javascript" src="names.js"></script> 
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">    </head>
     <body>
-
+        
+ 
         <div id="wrapper">
 
             <section id="content-part1">
@@ -58,7 +63,7 @@
                 <section class="character-sheet" id="character-sheet-info">
 
                     <!-- Character basic information -->
-                    <section class="flex-container">
+                    <section class="flex-container items-column">
 
                         <section class="flex-item item0">
 
@@ -191,24 +196,29 @@
 
                         <section class="flex-item item2">
 
-                            <article class="inspiration">
-                                <div class="box-square">
-                                    <input type="checkbox">
-                                </div>
-                                <div class="box-header">
-                                    <h1>Inspiration</h1>
-                                </div>
-                            </article>
+                            <section class="items-row">
 
-                            <article class="long-box-with-circle">
-                                <div class="box-circle">
-                                    <input class="h2" type="text" id="proficiency-bonus" value="2">
-                                </div>
-                                <div class="box-header">
-                                    <h1>Proficiency bonus</h1>
-                                </div>
-                            </article>
+                                <article class="inspiration">
+                                    <div class="box-square">
+                                        <input type="checkbox">
+                                    </div>
+                                    <div class="box-header">
+                                        <h1>Inspiration</h1>
+                                    </div>
+                                </article>
+    
+                                <article class="long-box-with-circle">
+                                    <div class="box-circle">
+                                        <input class="h2" type="text" id="proficiency-bonus" value="2">
+                                    </div>
+                                    <div class="box-header">
+                                        <h1>Proficiency bonus</h1>
+                                    </div>
+                                </article>
 
+                            </section>
+       
+                        <section class="items-column skillsAndSaving">
                             <article class="proficiency-box">
 
                                 <div class="prof-row">
@@ -464,6 +474,7 @@
                                 </div>
 
                             </article>
+                        </section>
 
                         </section>
 
@@ -488,35 +499,42 @@
 
                             </section>
 
-                            <article class="box">
+                            <section class="items-row hp-content">
 
-                                <div class="hitpoints-content">
-                                    <h4>Hit Point Maximum</h5>
-                                    <div class="text-line">
-                                        <input class="h4" type="text" id="maxHitpoints" value="">
+                                <article class="box">
+
+                                    <div class="hitpoints-content">
+                                        <h4>Hit Point Maximum</h5>
+                                        <div class="text-line">
+                                            <input class="h4" type="text" id="maxHitpoints" value="">
+                                        </div>
                                     </div>
-                                </div>
+    
+                                    <div class="box-text">
+                                        <input class="h2" type="number" id="currentHitpoints" value="">
+                                    </div>
+    
+                                    <div class="description">
+                                        <h1>Current Hit Points</h1>
+                                    </div>
+    
+                                </article>
+    
+                                <article class="box justify-bottom">
 
-                                <div class="box-text">
-                                    <input class="h2" type="number" id="currentHitpoints" value="">
-                                </div>
+                                    <div class="box-text">
+                                        <input class="h2" type="number" id="temporaryHitpoints" value="">
+                                    </div>
 
-                                <div class="description">
-                                    <h1>Current Hit Points</h1>
-                                </div>
+                                    <div class="description">
+                                        <h1>Temporary Hit Points</h1>
+                                    </div>
+    
+                                </article>
 
-                            </article>
+                            </section>
 
-                            <article class="box">
-                                <div class="box-text">
-                                    <input class="h2" type="number" id="temporaryHitpoints" value="">
-                                </div>
-                                <div class="description">
-                                    <h1>Temporary Hit Points</h1>
-                                </div>
-
-                            </article>
-
+                           
                             <section class="horizontal-group">
 
                                 <article class="box-2">
@@ -640,16 +658,15 @@
                                         <h3>Features & Traits</h3>
                                     </div>
                                 </article>
-                            </section>
-
                                 
+                            </section>
 
                         </section>
 
                     </section>
 
                     <!-- Character stats bottom -->
-                    <section class="flex-container">
+                    <section class="flex-container" id="container-2">
                         
                         <section class="flex-item item5">
 
@@ -803,10 +820,9 @@
             <h2>What is left to do:</h2>
             <ul>
                 <li>Fix the occasional duplication of equipment.</li>
-                <li>Fetch and present class features.</li>
-                <li>Fix better async methods for a more stable runtime.</li>
-                <li>Find a way to fetch and present spell information, which the api is lacking.</li>
-                <li>Make the whole thang mobile friendly.</li>
+                <li>Fetch expertise info from class features.</li>
+                <li>Fix better async methods for a more smooth runtime.</li>
+                <li>Find a way to fetch and present spell information, which the api is somewhat lacking.</li>
                 <li>Maybe make it possible to export a PDF character sheet with the information.</li>
             </ul>
             </div>
@@ -819,6 +835,7 @@
         </section>
 
         </div>
+        <script src="start.js" charset="utf-8"></script>
 
     </body>
 </html>
