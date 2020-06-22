@@ -47,13 +47,12 @@ $("#menu-backgroundinfo").click(function () {
 });
 
 $("#button").click(function () {
+    
     $("#button").fadeToggle(300, function () {
         $("#wait").fadeToggle();
     });
 
-    setTimeout(changeText, 1900);
     main();
-
 
 });
 
@@ -84,6 +83,8 @@ $("#showinfo").click(function () {
 
 function main() {
 
+    setTimeout(changeText, 1900);
+
     getRace.done(function () {
 
         getTraits();
@@ -93,7 +94,6 @@ function main() {
         getName();
 
         getClass.done(function () {
-            character_base["Class"] = "rogue";
             getAlignment();
             getOccupation();
             getHitDie();
@@ -183,8 +183,10 @@ function showInfo() {
 
                             inputField.value = parseInt(calculate(abilityScores[skill])) + parseInt(document.getElementById("proficiency-bonus").value);
 
-                            if(itemContent.includes(expertise.split(' ').pop())) {
-                                inputField.value = parseInt(inputField.value) + parseInt(document.getElementById("proficiency-bonus").value);
+                            if(expertise) {
+                                if(itemContent.includes(expertise.split(' ').pop())) {
+                                    inputField.value = parseInt(inputField.value) + parseInt(document.getElementById("proficiency-bonus").value);
+                                }
                             }
 
                         } else {
@@ -308,7 +310,11 @@ function showInfo() {
         var input3 = document.createElement("input");
         input3.className = "h6 weapon-attack";
         input3.type = "text";
-        input3.value = attacks[item]["diceroll"] + "+" + attacks[item]["ability"] + " " + attacks[item]["damagetype"];
+        if(attacks[item]["ability"] > 0) {
+            input3.value = attacks[item]["diceroll"] + "+" + attacks[item]["ability"] + " " + attacks[item]["damagetype"];
+        } else {
+            input3.value = attacks[item]["diceroll"] + " " + attacks[item]["damagetype"];
+        }
 
         smallDiv1.appendChild(input1);
         smallDiv2.appendChild(input2);
@@ -728,8 +734,9 @@ function getProficiencyType() {
 
 function getStartingEquipment() {
 
-    $.getJSON('https://www.dnd5eapi.co/api/starting-equipment', function (json) {
-        var shortcut;
+    var shortcut; 
+
+    var getUrl = $.getJSON('https://www.dnd5eapi.co/api/starting-equipment', function (json) {
 
         var chosenClass = character_base["Class"];
         toUpper = chosenClass.charAt(0).toUpperCase() + chosenClass.slice(1);
@@ -740,11 +747,16 @@ function getStartingEquipment() {
             }
         });
 
+    });
+
+    getUrl.done(function() {
+
         $.getJSON('https://www.dnd5eapi.co' + shortcut, function (json) {
 
             $(json.starting_equipment).each(function (i) {
 
                 equipment.push([json.starting_equipment[i].item.name, json.starting_equipment[i].quantity, json.starting_equipment[i].item.url]);
+            
             });
 
             var choiceBoxes = [];
@@ -752,39 +764,62 @@ function getStartingEquipment() {
             var contentKeys = Object.keys(json);
 
             for (var index = 0; index < contentKeys.length; index++) {
+
                 if (contentKeys[index].startsWith(choice)) {
                     choiceBoxes.push(contentKeys[index]);
                 }
+                
             }
 
             for (var i = 0; i < choiceBoxes.length; i++) {
 
                 var chooseBoxes = json[choiceBoxes[i]];
+
                 var randIndex = Math.floor(Math.random() * chooseBoxes.length);
 
                 $(json[choiceBoxes[i]][randIndex]).each(function (j) {
 
-                    var sumItems = json[choiceBoxes[i]][randIndex].from;
                     var howMany = json[choiceBoxes[i]][randIndex].choose;
-                    
-                    var oldRandIndex;
+                    var oldRandIndex = 99;
 
                     for(var k = 0; k < howMany; k++) {
 
-                        var randomIndex = Math.floor(Math.random() * sumItems.length);
+                        var items = json[choiceBoxes[i]][randIndex].from;
 
-                        while(oldRandIndex == randomIndex) {
-                            randomIndex = Math.floor(Math.random() * sumItems.length);
+                        if(howMany > items.length) {
+                            howMany = items.length;
                         }
 
-                        var name = json[choiceBoxes[i]][randIndex].from[randomIndex].item.name;
-                        var amount = json[choiceBoxes[i]][randIndex].from[randomIndex].quantity;
-                        var url = json[choiceBoxes[i]][randIndex].from[randomIndex].item.url;
+                        var randomIndex = Math.floor(Math.random() * items.length);
 
-                        equipment.push([name, amount, url]);
+                        while(oldRandIndex == randomIndex) {
+                            randomIndex = Math.floor(Math.random() * items.length);
+                        }
+
+                        var exist = false;
+                        for(var e in equipment) {
+
+                            if(equipment[e][0] == json[choiceBoxes[i]][randIndex].from[randomIndex].item.name) {
+
+                                exist = true;
+   
+
+                            } 
+                        }
+
+                        if(exist == false) {
+                            var name = json[choiceBoxes[i]][randIndex].from[randomIndex].item.name;
+                                var amount = json[choiceBoxes[i]][randIndex].from[randomIndex].quantity;
+                                var url = json[choiceBoxes[i]][randIndex].from[randomIndex].item.url;
+        
+                                equipment.push([name, amount, url]);
+
+                        }
+
                         oldRandIndex = randomIndex;
 
                     }
+
                 });
             }
             getAttackDetails();
@@ -835,12 +870,18 @@ function getAttackDetails() {
                 }
 
                 if(attacks[attacks.length-1]["range"] == "Melee") {
-                    bonus += parseInt(calculate(abilityScores["STR"]));
-                    attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+
+                    if(parseInt(calculate(abilityScores["STR"])) > 0) {
+                        bonus += parseInt(calculate(abilityScores["STR"]));
+                        attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                    }
 
                 } else if(attacks[attacks.length-1]["range"] == "Ranged") {
-                    bonus += parseInt(calculate(abilityScores["DEX"]));
-                    attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+
+                    if(parseInt(calculate(abilityScores["DEX"])) > 0) {
+                        bonus += parseInt(calculate(abilityScores["DEX"]));
+                        attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                    }
 
                 } else if(attacks[attacks.length-1]["range"] == "Finesse") {
 
