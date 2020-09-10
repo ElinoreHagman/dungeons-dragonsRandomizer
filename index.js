@@ -914,26 +914,56 @@ function getAttackDetails() {
 
 function getArmorclass() {
 
-    for(let url in equipment) {
+    var promises = [];
 
-        $.getJSON('https://www.dnd5eapi.co' + equipment[url][2], function (json) {
+    for(var i = 0; i < equipment.length; i++) {
 
-            if(json.equipment_category.name == "Armor") {
+        promises.push($.getJSON('https://www.dnd5eapi.co' + equipment[i][2]));
 
-                armor.push ({
-                "name" : json.name,
-                "armor" : json.armor_class.base,
-                "category" : json.armor_category,
-                "bonus" : json.armor_class.dex_bonus,
-                "maxbonus" : json.armor_class.max_bonus,
-                "strength" : json.str_minimum
-                });
-            }
-
-        });
     }
 
-    setTimeout(getArmorDetails, 1000);
+    $.when.apply($, promises).then(function() {
+
+        for(var i = 0; i < promises.length; i++){
+
+            if(promises.length > 1) {
+                
+                if(arguments[i][0].equipment_category.name == "Armor") {
+
+                    armor.push ({
+                    "name" : arguments[i][0].equipment_category.name,
+                    "armor" : arguments[i][0].armor_class.base,
+                    "category" : arguments[i][0].armor_category,
+                    "bonus" : arguments[i][0].armor_class.dex_bonus,
+                    "maxbonus" : arguments[i][0].armor_class.max_bonus,
+                    "strength" : arguments[i][0].str_minimum
+                    });
+                } 
+
+            } else {
+
+                if(arguments[0].equipment_category.name == "Armor") {
+
+                    armor.push ({
+                    "name" : arguments[0].equipment_category.name,
+                    "armor" : arguments[0].armor_class.base,
+                    "category" : arguments[0].armor_category,
+                    "bonus" : arguments[0].armor_class.dex_bonus,
+                    "maxbonus" : arguments[0].armor_class.max_bonus,
+                    "strength" : arguments[0].str_minimum
+                    });
+                } 
+
+            }
+
+        }
+
+        getArmorDetails();
+
+
+    });
+
+
 }
 
 function getArmorDetails() {
@@ -942,12 +972,7 @@ function getArmorDetails() {
     var chosenArmor;
     var shield = 0;
 
-    console.log(armor);
-    console.log(armor.length);
-
     if(armor.length > 0) {
-
-        console.log(armor);
 
         for(var item in armor) {
 
