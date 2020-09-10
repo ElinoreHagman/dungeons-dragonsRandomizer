@@ -299,6 +299,7 @@ function showInfo() {
         var input2 = document.createElement("input");
         input2.className = "h6 weapon-bonus";
         input2.type = "text";
+
         if(parseInt(attacks[item]["bonus"]) > 0 ) {
             input2.value = "+" + attacks[item]["bonus"];
         } else {
@@ -755,73 +756,79 @@ function getStartingEquipment() {
 
             $(json.starting_equipment).each(function (i) {
 
-                equipment.push([json.starting_equipment[i].item.name, json.starting_equipment[i].quantity, json.starting_equipment[i].item.url]);
+                equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
             
             });
 
-            var choiceBoxes = [];
-            var choice = "choice_"
-            var contentKeys = Object.keys(json);
 
-            for (var index = 0; index < contentKeys.length; index++) {
+            // Starting equipment options under development after API changed tree structure
 
-                if (contentKeys[index].startsWith(choice)) {
-                    choiceBoxes.push(contentKeys[index]);
-                }
-                
-            }
+            // console.log(json.starting_equipment_options);
 
-            for (var i = 0; i < choiceBoxes.length; i++) {
+            // $(json.starting_equipment_options).each(function (i) {
 
-                var chooseBoxes = json[choiceBoxes[i]];
+            //     var choose = json.starting_equipment_options[i].choose;
+            
+            //     $(json.starting_equipment_options[i].from).each(function (j) {
 
-                var randIndex = Math.floor(Math.random() * chooseBoxes.length);
+            //         console.log(json.starting_equipment_options[i].from[j].equipment.name);
 
-                $(json[choiceBoxes[i]][randIndex]).each(function (j) {
+            //     });
 
-                    var howMany = json[choiceBoxes[i]][randIndex].choose;
-                    var oldRandIndex = 99;
+            // });
 
-                    for(var k = 0; k < howMany; k++) {
+            // for (var i = 0; i < choiceBoxes.length; i++) {
 
-                        var items = json[choiceBoxes[i]][randIndex].from;
+            //     var chooseBoxes = json[choiceBoxes[i]];
 
-                        if(howMany > items.length) {
-                            howMany = items.length;
-                        }
+            //     var randIndex = Math.floor(Math.random() * chooseBoxes.length);
 
-                        var randomIndex = Math.floor(Math.random() * items.length);
+            //     $(json[choiceBoxes[i]][randIndex]).each(function (j) {
 
-                        while(oldRandIndex == randomIndex) {
-                            randomIndex = Math.floor(Math.random() * items.length);
-                        }
+            //         var howMany = json[choiceBoxes[i]][randIndex].choose;
+            //         var oldRandIndex = 99;
 
-                        var exist = false;
-                        for(var e in equipment) {
+            //         for(var k = 0; k < howMany; k++) {
 
-                            if(equipment[e][0] == json[choiceBoxes[i]][randIndex].from[randomIndex].item.name) {
+            //             var items = json[choiceBoxes[i]][randIndex].from;
 
-                                exist = true;
+            //             if(howMany > items.length) {
+            //                 howMany = items.length;
+            //             }
+
+            //             var randomIndex = Math.floor(Math.random() * items.length);
+
+            //             while(oldRandIndex == randomIndex) {
+            //                 randomIndex = Math.floor(Math.random() * items.length);
+            //             }
+
+            //             var exist = false;
+            //             for(var e in equipment) {
+
+            //                 if(equipment[e][0] == json[choiceBoxes[i]][randIndex].from[randomIndex].item.name) {
+
+            //                     exist = true;
    
 
-                            } 
-                        }
+            //                 } 
+            //             }
 
-                        if(exist == false) {
-                            var name = json[choiceBoxes[i]][randIndex].from[randomIndex].item.name;
-                                var amount = json[choiceBoxes[i]][randIndex].from[randomIndex].quantity;
-                                var url = json[choiceBoxes[i]][randIndex].from[randomIndex].item.url;
+            //             if(exist == false) {
+            //                 var name = json[choiceBoxes[i]][randIndex].from[randomIndex].item.name;
+            //                     var amount = json[choiceBoxes[i]][randIndex].from[randomIndex].quantity;
+            //                     var url = json[choiceBoxes[i]][randIndex].from[randomIndex].item.url;
         
-                                equipment.push([name, amount, url]);
+            //                     equipment.push([name, amount, url]);
 
-                        }
+            //             }
 
-                        oldRandIndex = randomIndex;
+            //             oldRandIndex = randomIndex;
 
-                    }
+            //         }
 
-                });
-            }
+            //     });
+            // }
+
             getAttackDetails();
             getArmorclass();
         });
@@ -840,10 +847,10 @@ function getAttackDetails() {
             attacks.push ({
             "name" : json.name,
             "category" : json.weapon_category,
-            "bonus" : json.damage.damage_bonus,
             "diceroll" : json.damage.damage_dice,
             "damagetype" : json.damage.damage_type.name,
-            "range" : json.weapon_range
+            "range" : json.weapon_range,
+            "bonus" : 0
             });
 
             $(json.properties).each(function (i) {
@@ -863,10 +870,10 @@ function getAttackDetails() {
                 }
             }
 
-            var bonus = parseInt(attacks[attacks.length-1]["bonus"]);
+            var bonus = 0;
 
                 if(isProficient = true) {    
-                    bonus += parseInt(document.getElementById("proficiency-bonus").value);
+                    bonus = parseInt(document.getElementById("proficiency-bonus").value);
                 }
 
                 if(attacks[attacks.length-1]["range"] == "Melee") {
@@ -926,7 +933,7 @@ function getArmorclass() {
         });
     }
 
-    setTimeout(getArmorDetails, 500);
+    setTimeout(getArmorDetails, 1000);
 }
 
 function getArmorDetails() {
@@ -935,7 +942,12 @@ function getArmorDetails() {
     var chosenArmor;
     var shield = 0;
 
+    console.log(armor);
+    console.log(armor.length);
+
     if(armor.length > 0) {
+
+        console.log(armor);
 
         for(var item in armor) {
 
