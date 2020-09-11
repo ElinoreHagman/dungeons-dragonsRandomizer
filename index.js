@@ -97,10 +97,10 @@ function main() {
             getAlignment();
             getOccupation();
             getHitDie();
-            getSpellcasting();
             getSkillProficiencies();
             getProficiencies();
             getFeatures();
+            getSpellcasting();
 
             setTimeout(getStartingEquipment, 1000);
 
@@ -109,7 +109,7 @@ function main() {
 }
 
 function showInfo() {
-    
+
     $("#content-part2").fadeToggle();
     $("#content-part1").toggle();
     // Character info
@@ -752,6 +752,7 @@ function getStartingEquipment() {
 
     getUrl.done(function() {
 
+        // STARTING EQUIPMENT OPTIONS DOESN'T WORK
         $.getJSON('https://www.dnd5eapi.co' + shortcut, function (json) {
 
             $(json.starting_equipment).each(function (i) {
@@ -1048,12 +1049,15 @@ function getFeatures() {
 
 function getSpellcasting() {
 
-    $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
+    var cantripsAmount = 0;
+    var firstLevelSpellsAmount = 0;
+    var hasSpellcasting = false;
 
-        var cantripsAmount = 0;
-        var firstLevelSpellsAmount = 0;
+    var getSpellNumber = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
 
         if (json.hasOwnProperty('spellcasting')) {
+
+            hasSpellcasting = true;
 
             if (json.spellcasting.hasOwnProperty('cantrips_known')) {
                 cantripsAmount = json.spellcasting.cantrips_known;
@@ -1062,50 +1066,201 @@ function getSpellcasting() {
             if (json.spellcasting.hasOwnProperty('spells_known')) {
                 firstLevelSpellsAmount = json.spellcasting.spells_known;
             }
+
+            if (json.spellcasting.hasOwnProperty('spell_slots_level_1')) {
+                character_base["SpellSlots"] = json.spellcasting.spell_slots_level_1;
+            }
+  
         }
 
-        var classSpells = [];
-        var chosenSpells = [];
-        var chosenCantrips = [];
+    });
 
-        var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json) {
-            $(json.results).each(function (i) {
-                classSpells.push(json.results[i].url);
+    getSpellNumber.done(function() {
+
+        if(hasSpellcasting == true) {
+
+            var getSpellModifier = $.getJSON('https://www.dnd5eapi.co/api/spellcasting/' + character_base["Class"], function (json2) {
+                
+                character_base["SpellcastingAbility"] = json2.spellcasting_ability.name;
+    
             });
-        });
 
-        getSpells.done(function () {
+            getSpellModifier.done(function() {        
+        
+                var classSpells = [];
+                var chosenSpells = [];
+                var chosenCantrips = [];
+        
+                var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json) {
+                    $(json.results).each(function (i) {
+                        classSpells.push(json.results[i].url);
+                    });
+                });
+        
+                getSpells.done(function() {
+        
+                    for (var i = 0; i < classSpells.length; i++) {
+        
+                        var random = Math.floor(Math.random() * classSpells.length);
+        
+                        $.getJSON('https://www.dnd5eapi.co' + classSpells[random], function (json2) {
+        
+                            if(json2.hasOwnProperty('damage')) {
 
-            for (var i = 0; i < classSpells.length; i++) {
+                                if(json2.damage.hasOwnProperty('damage_at_character_level')) {
 
-                var random = Math.floor(Math.random() * classSpells.length)
+                                    if(json2.damage.damage_at_character_level.hasOwnProperty('1')) {
 
-                $.getJSON('https://www.dnd5eapi.co' + classSpells[random], function (json2) {
+                                        if (json2.level === 0) {
+            
+                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
+                                                chosenCantrips.push(json2.index); 
+                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
 
-                    if (json2.level === 0) {
+                                                } else {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
 
-                        if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                            chosenCantrips.push(json2.index);
+                                                }              
+                                            } else {
 
-                            spellList.push([json2.name, json2.level]);
-                        }
+                                                random = Math.floor(Math.random() * classSpells.length);
+    
+                                            }
+                    
+                                        } if (json2.level === 1) {
+                    
+                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
+                                                chosenSpells.push(json2.index);
+                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
 
-                    } if (json2.level === 1) {
+                                                } else {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
 
-                        if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                            chosenSpells.push(json2.index);
-                            spellList.push([json2.name, json2.level]);
+                                                } 
+                    
+                                            } else {
 
-                        }
+                                                random = Math.floor(Math.random() * classSpells.length);
+
+                                            }
+
+                                        } 
+
+
+                                    }
+
+                                }
+
+                                if(json2.damage.hasOwnProperty('damage_at_slot_level')) {
+
+                                    if(json2.damage.damage_at_slot_level.hasOwnProperty('1')) {
+
+                                        if (json2.level === 0) {
+            
+                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
+                                                chosenCantrips.push(json2.index);    
+                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+
+                                                } else {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+
+                                                }         
+                                                spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
+                                            } else {
+
+                                                random = Math.floor(Math.random() * classSpells.length);
+
+                                            }
+                    
+                                        } if (json2.level === 1) {
+                    
+                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
+                                                chosenSpells.push(json2.index);
+                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+
+                                                } else {
+                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
+
+                                                } 
+                    
+                                            } else {
+
+                                                random = Math.floor(Math.random() * classSpells.length);
+
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                                
+
+                            } else if(!json2.hasOwnProperty('damage')) {
+
+                                if (json2.level === 0) {
+            
+                                    if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
+                                        chosenCantrips.push(json2.index);               
+                                        spellList.push([json2.name, json2.level, null, null]);
+                                    }
+            
+                                } if (json2.level === 1) {
+            
+                                    if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
+                                        chosenSpells.push(json2.index);
+                                        spellList.push([json2.name, json2.level, null, null]);
+            
+                                    }
+                                }
+
+                            }
+                            
+                        });
+
+
+
                     }
+                    
+
 
                 });
-            }
+            
+    
+            });
 
-        });
+        }
+
+        setTimeout(insertSpellsIntoAttacks, 4000);
+
     });
 }
 
+function insertSpellsIntoAttacks() {
+
+    for(var item in spellList) {
+                            
+        if(spellList[item][3] !== null) {
+
+            var bonus = calculate(abilityScores[character_base["SpellcastingAbility"]]) + parseInt(document.getElementById("proficiency-bonus").value);
+
+            attacks.push ({
+                "name" : spellList[item][0],
+                "category" : null,
+                "diceroll" : spellList[item][2],
+                "damagetype" : spellList[item][3],
+                "range" : null,
+                "bonus" : bonus
+            });
+
+        }
+    }
+
+}
+ 
 function getLanguages() {
 
     $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
