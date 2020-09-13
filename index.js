@@ -94,6 +94,10 @@ function main() {
         getName();
 
         getClass.done(function () {
+
+            console.log(character_base["Race"] + character_base["Class"]);
+
+            getSavingThrows();
             getAlignment();
             getOccupation();
             getHitDie();
@@ -382,8 +386,9 @@ function showInfo() {
 }
 
 var getRace = $.getJSON('https://www.dnd5eapi.co/api/races', function (json) {
+    
     var races = [];
-    console.log();
+
     $(json.results).each(function (i) {
         races.push(json.results[i].index);
     });
@@ -395,26 +400,21 @@ var getRace = $.getJSON('https://www.dnd5eapi.co/api/races', function (json) {
 
         character_base["Speed"] = json.speed;
 
-        var subrace;
+        var subraces = [];
+
         if (json.subraces.length > 0) {
 
             $(json.subraces).each(function (i) {
-                subrace = json.subraces[i].name;
+                subraces.push(json.subraces[i].index);
             });
 
             var random = Math.random() > 0.6;
+            var randIndex2 = Math.floor(Math.random() * subraces.length);
+
             if (random) {
-                $.getJSON('https://www.dnd5eapi.co/api/subraces/', function (json) {
 
-                    $(json.results).each(function (i) {
-
-                        if (json.results[i].name === subrace) {
-
-                            character_base["Subrace"] = json.results[i].index;
-                        }
-
-                    });
-                });
+                character_base["Subrace"] = subraces[randIndex2];
+  
             }
         }
     });
@@ -422,7 +422,8 @@ var getRace = $.getJSON('https://www.dnd5eapi.co/api/races', function (json) {
 });
 
 var getClass = $.getJSON('https://www.dnd5eapi.co/api/classes', function (json) {
-    var classes = [];
+    
+var classes = [];
 
     $(json.results).each(function (i) {
         classes.push(json.results[i].index);
@@ -433,30 +434,22 @@ var getClass = $.getJSON('https://www.dnd5eapi.co/api/classes', function (json) 
 
     $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
 
-        var subclass;
+        var subclasses = [];
         if (json.subclasses.length > 0) {
 
             $(json.subclasses).each(function (i) {
-                subclass = json.subclasses[i].name;
+                subclasses.push(json.subclasses[i].index);
             });
         }
 
         var random = Math.random() > 0.6;
-        if (random) {
-            $.getJSON('https://www.dnd5eapi.co/api/subclasses/', function (json) {
+        var randIndex2 = Math.floor(Math.random() * subclasses.length);
 
-                $(json.results).each(function (i) {
-
-                    if (json.results[i].name === subclass) {
-
-                        character_base["Subclass"] = json.results[i].index;
-                    }
-                });
-            });
+        if (random) {          
+            character_base["Subclass"] = subclasses[randIndex2];
         }
 
     });
-    getSavingThrows();
 });
 
 function getName() {
@@ -1099,7 +1092,9 @@ function getSpellcasting() {
         
                 getSpells.done(function() {
         
-                    for (var i = 0; i < classSpells.length; i++) {
+                    var spellsLeft = classSpells.length;
+
+                    for (var i = 0; i < spellsLeft; i++) {
         
                         var random = Math.floor(Math.random() * classSpells.length);
         
@@ -1125,6 +1120,7 @@ function getSpellcasting() {
                                             } else {
 
                                                 random = Math.floor(Math.random() * classSpells.length);
+                                                spellsLeft++;
     
                                             }
                     
@@ -1143,7 +1139,7 @@ function getSpellcasting() {
                                             } else {
 
                                                 random = Math.floor(Math.random() * classSpells.length);
-
+                                                spellsLeft++;
                                             }
 
                                         } 
@@ -1172,7 +1168,7 @@ function getSpellcasting() {
                                             } else {
 
                                                 random = Math.floor(Math.random() * classSpells.length);
-
+                                                spellsLeft++;
                                             }
                     
                                         } if (json2.level === 1) {
@@ -1190,7 +1186,7 @@ function getSpellcasting() {
                                             } else {
 
                                                 random = Math.floor(Math.random() * classSpells.length);
-
+                                                spellsLeft++;
                                             }
                                         }
 
