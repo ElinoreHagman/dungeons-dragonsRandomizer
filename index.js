@@ -81,35 +81,1068 @@ $("#showinfo").click(function () {
     $(".projectInformation").slideToggle();
 });
 
+
 function main() {
 
-    setTimeout(changeText, 1900);
-
-    getRace.done(function () {
-
-        getTraits();
-        getAge();
-        getAbilityScores();
-        getLanguages();
-        getName();
-
-        getClass.done(function () {
-
-            console.log(character_base["Race"] + character_base["Class"]);
-
-            getSavingThrows();
-            getAlignment();
-            getOccupation();
-            getHitDie();
-            getSkillProficiencies();
-            getProficiencies();
-            getFeatures();
-            getSpellcasting();
-
-            setTimeout(getStartingEquipment, 1000);
-
+    let getRace = new Promise((resolve, reject) => {
+    
+        var races = [];
+        
+        var getRaces = $.getJSON('https://www.dnd5eapi.co/api/races', function (json) {
+    
+            $(json.results).each(function (i) {
+                races.push(json.results[i].index);
+            });
+        });
+    
+        getRaces.done(function() {
+    
+            var randIndex = Math.floor(Math.random() * races.length);
+            character_base["Race"] = races[randIndex];
+    
+            $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+    
+                character_base["Speed"] = json.speed;
+    
+                var subraces = [];
+    
+                if (json.subraces.length > 0) {
+    
+                    $(json.subraces).each(function (i) {
+                        subraces.push(json.subraces[i].index);
+                    });
+    
+                    var random = Math.random() > 0.6;
+                    var randIndex2 = Math.floor(Math.random() * subraces.length);
+    
+                    if (random) {
+    
+                        character_base["Subrace"] = subraces[randIndex2];
+        
+                    }
+                }
+                resolve();
+            });
+    
+        });
+    
+    
+    });
+    
+    let getClass = new Promise((resolve, reject) => {
+        
+        var classes = [];
+    
+        var getClasses = $.getJSON('https://www.dnd5eapi.co/api/classes', function (json) {
+    
+            $(json.results).each(function (i) {
+                classes.push(json.results[i].index);
+            });
+        });  
+    
+        getClasses.done(function() {
+    
+            var randIndex = Math.floor(Math.random() * classes.length);
+            character_base["Class"] = classes[randIndex];
+    
+            $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
+    
+                var subclasses = [];
+                if (json.subclasses.length > 0) {
+    
+                    $(json.subclasses).each(function (i) {
+                        subclasses.push(json.subclasses[i].index);
+                    });
+                }
+    
+                var random = Math.random() > 0.6;
+                var randIndex2 = Math.floor(Math.random() * subclasses.length);
+    
+                if (random) {          
+                    character_base["Subclass"] = subclasses[randIndex2];
+                }
+    
+                resolve();
+    
+            });
         });
     });
+
+
+    Promise.all([getRace, getClass]).then(values => {
+
+        //console.log("class and race done");
+
+        const getTraits = new Promise((resolve, reject) => {
+        
+            $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+        
+                $(json.traits).each(function (i) {
+        
+                    $.getJSON('https://www.dnd5eapi.co' + json.traits[i].url, function (json2) {
+        
+                        traits.push([json2.name, json2.desc[0]]);
+                    });
+                });
+        
+                resolve();
+            });
+            
+        });   
+        
+        const getName = new Promise((resolve, reject) => {
+        
+            var race = character_base["Race"]; 
+            race = race.replace("-", "");
+            var raceNames = window["name_" + race];
+            var raceSurnames = window["surname_" + race];
+        
+            var randIndex = Math.floor(Math.random() * raceNames.length);
+            var randIndex2 = Math.floor(Math.random() * raceSurnames.length);
+        
+            character_base["Name"] = raceNames[randIndex] + " " + raceSurnames[randIndex2];
+        
+            resolve();
+        
+        });
+        
+        const getAge = new Promise((resolve, reject) => {
+        
+            var ages = {};
+            ages["dwarf"] = [20, 250];
+            ages["elf"] = [50, 350];
+            ages["gnome"] = [20, 200];
+            ages["half-elf"] = [14, 125];
+            ages["half-orc"] = [8, 60];
+            ages["halfling"] = [14, 100];
+            ages["human"] = [13, 70];
+            ages["dragonborn"] = [15, 80];
+            ages["tiefling"] = [13, 70];
+        
+            var minAge = Math.ceil(ages[character_base["Race"]][0]);
+            var maxAge = Math.floor(ages[character_base["Race"]][1]);
+        
+            var randIndex = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+            character_base["Age"] = randIndex;
+        
+            resolve();
+        });
+        
+        const getAbilityScores = new Promise((resolve, reject) => {
+        
+            var abilities = [];
+            scores = [8, 10, 12, 13, 14, 15];
+        
+            var getAbility1 = $.getJSON('https://www.dnd5eapi.co/api/ability-scores', function (json) {
+        
+                $(json.results).each(function (i) {
+                    abilities.push(json.results[i].name);
+                });
+        
+                for (let index = 0; index < abilities.length; index++) {
+        
+                    var randIndex = Math.floor(Math.random() * scores.length);
+        
+                    abilityScores[abilities[index]] = scores[randIndex];
+                    var removableIndex = scores.indexOf(scores[randIndex]);
+                    scores.splice(removableIndex, 1);
+                }
+            });
+        
+            getAbility1.done(function(){
+        
+                $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+        
+                    var bonusList = [];
+        
+                    $(json.ability_bonuses).each(function (index) {
+        
+                        bonusList.push(json.ability_bonuses[index].name);
+                        var ability = json.ability_bonuses[index].name;
+                        var number = json.ability_bonuses[index].bonus;
+        
+                        abilityScores[ability] += number;
+                    });
+                    
+                    if (json.hasOwnProperty('ability_bonus_options')) {
+        
+                        var choose = json.ability_bonus_options.choose;
+                        var listBonuses = {};
+                        $(json.ability_bonus_options.from).each(function (i) {
+                            listBonuses[json.ability_bonus_options.from[i].name] = json.ability_bonus_options.from[i].bonus;
+                        });
+        
+                        for(var i = 0; i < choose; i++) {
+                            var randIndex = Math.floor(Math.random() * Object.keys(listBonuses).length);
+                            
+                            if(!bonusList.includes(Object.keys(listBonuses)[randIndex])) {
+                                bonusList.push(Object.keys(listBonuses)[randIndex]);
+                                abilityScores[Object.keys(listBonuses)[randIndex]] += listBonuses[Object.keys(listBonuses)[randIndex]];
+                            } else {
+                                choose++;
+                            }
+                        }
+        
+                    } 
+        
+                    if (character_base["Subrace"]) {
+                        $.getJSON('https://www.dnd5eapi.co/api/subraces/' + character_base["Subrace"], function (json) {
+        
+                            $(json.ability_bonuses).each(function (index) {
+        
+                                var ability = json.ability_bonuses[index].name;
+                                var number = json.ability_bonuses[index].bonus;
+        
+                                abilityScores[ability] += number;
+                            });
+                        });
+                    } 
+                
+                    resolve();
+        
+                });
+        
+            });
+        });
+        
+        const getLanguages = new Promise((resolve, reject) => {
+        
+            var getlanguages1 = $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+        
+                $(json.languages).each(function (i) {
+                    languages.push(json.languages[i].name);
+                });
+            });
+        
+            getlanguages1.done(function() {
+        
+                $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+        
+                if (json.hasOwnProperty('language_options')) {
+        
+                    var choose = json.language_options.choose;
+                    var sumLanguages = 0;
+                    var theLanguages = [];
+        
+                    $(json.language_options.from).each(function (i) {
+                        sumLanguages++;
+                        theLanguages.push(json.language_options.from[i].name);
+                    });
+        
+                    for (var i = 0; i < choose; i++) {
+        
+                        var randIndex = Math.floor(Math.random() * theLanguages.length);
+        
+                        if (!languages.includes(theLanguages[randIndex])) {
+        
+                            languages.push(theLanguages[randIndex]);
+                        }
+                    }
+                }
+                
+                resolve();
+        
+            });
+        
+            });
+        
+            
+        });
+
+        const getOccupation = new Promise((resolve, reject) => {
+
+            var element = window["Backgrounds"];
+            var dice = element["Dice"].split("d");
+            var diceNumber = Math.floor(Math.random() * dice[1] + 1);
+            const dash = '-';
+        
+            for (i in element) {
+        
+                var numbers = i.split(dash);
+        
+                if (numbers.length == 2) {
+        
+                    if (diceNumber >= numbers[0] && diceNumber <= numbers[1]) {
+                        character_base["Occupation"] = element[i];
+                    }
+        
+                } if (numbers.length == 1 && numbers[0] != "Dice") {
+        
+                    if (diceNumber == numbers[0]) {
+                        character_base["Occupation"] = element[i];
+        
+                    }
+                }
+        
+            }
+
+            resolve();
+        
+        });
+                            
+        Promise.all([getTraits, getAge, getAbilityScores, getLanguages, getName, getOccupation]).then(values => {
+            
+            //console.log("first batch done");
+            
+            const getSavingThrows = new Promise((resolve, reject) => {
+    
+                $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
+            
+                    $(json.saving_throws).each(function (i) {
+                        savingthrows.push(json.saving_throws[i].name);
+                    });
+            
+                    resolve();
+            
+                });
+            
+            });
+
+            const getStartingWealth = new Promise((resolve, reject) => {
+
+                var background = character_base["Occupation"];
+                for(var choice in BackgroundGold) {
+                    if(choice.includes(background)) {
+                        character_base["Wealth"] = BackgroundGold[choice];
+                    }
+                }
+            
+                resolve();
+            
+            });
+
+            const getHitDie = new Promise((resolve, reject) => {
+
+                $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
+                    character_base["HitDie"] = json.hit_die;
+                
+                    var dropdown = document.getElementById("hitdice");
+                    var options = dropdown.options;
+                
+                    for(var i = 0; i < options.length; i++) {
+                    
+                        if(options[i].value.includes(character_base["HitDie"])) {
+                            dropdown.options.selectedIndex = i;
+                        }
+                    }
+            
+                    if(calculate(abilityScores["CON"]) != "-1") {
+                        character_base["HitDie"] += parseInt(calculate(abilityScores["CON"]));
+                    }
+            
+                    resolve();
+                });
+            
+            });
+
+            const getFeatures = new Promise((resolve, reject) => {
+ 
+                let featureList = [];
+            
+                var getList = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
+                    
+                    $(json.features).each(function (i) {
+                        featureList.push(json.features[i].url);
+                    });
+                });
+            
+                getList.done(function() {
+                    
+                    for(let f in featureList) {
+            
+                        $.getJSON('https://www.dnd5eapi.co' + featureList[f], function (json) {
+                    
+                            traits.push([json.name, json.desc[0]]);
+                        });
+                    }
+            
+                    resolve();
+            
+                });
+                
+            });
+
+            const getSkillProficiencies = new Promise((resolve, reject) => {
+
+                var getOrdinary = $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base['Race'], function (json) {
+            
+                    $(json.starting_proficiencies).each(function (i) {
+                        if(json.starting_proficiencies[i].name.includes("Skill:")) {
+                            skillproficiencies.push(json.starting_proficiencies[i].name);
+                        }
+                    });
+
+                });
+                  
+                getOrdinary.done(function() {
+
+                    $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base['Class'], function (json2) {
+        
+                        var amountOfLists = json2.proficiency_choices.length;
+                        for(var i = 0; i < amountOfLists; i++) {
+                        
+                            var choose = json2.proficiency_choices[i].choose;
+                            var oldRandIndex;
+                
+                            for(var j = 0; j < choose; j++) {
+                
+                                var randIndex = Math.floor(Math.random() * json2.proficiency_choices[i].from.length);
+
+                                while(oldRandIndex == randIndex) {
+                                    randIndex = Math.floor(Math.random() * json2.proficiency_choices[i].from.length);
+                                }
+                                
+                                if(json2.proficiency_choices[i].from[randIndex].name.includes("Skill:") && !skillproficiencies.includes(json2.proficiency_choices[i].from[randIndex].name)) {
+                                    skillproficiencies.push(json2.proficiency_choices[i].from[randIndex].name);
+                                    oldRandIndex = randIndex;
+                                }
+                            }
+            
+                        }  
+
+                    });
+                            
+                    resolve();
+            
+                });
+            
+            });
+
+            var proficiencyUrls = [];
+            const getProficiencies = new Promise((resolve, reject) => {
+
+                var getRaceProfs = $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+
+                    $(json.starting_proficiencies).each(function (i) {
+
+                        if(!json.starting_proficiencies[i].name.includes("Skill:")) {
+
+                            proficiencyUrls.push(json.starting_proficiencies[i].url);
+                        }
+
+                    });
+
+                    if (json.hasOwnProperty('starting_proficiency_options')) {
+
+                        var choose = json.starting_proficiency_options.choose;
+                        var oldRandIndex;
+
+                        for(var j = 0; j < choose; j++) {
+
+                            var randIndex = Math.floor(Math.random() * json.starting_proficiency_options.from.length);
+
+                            while(oldRandIndex == randIndex) {
+                                randIndex = Math.floor(Math.random() * json.starting_proficiency_options.from.length);
+                            }
+
+                            if(!proficiencies.includes(json.starting_proficiency_options.from[randIndex].name)) {
+
+                                proficiencyUrls.push(json.starting_proficiency_options.from[randIndex].url);
+                                oldRandIndex = randIndex;
+                            }
+                        }
+                    }
+
+                });
+
+                getRaceProfs.done(function() {
+
+                    $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
+
+                        $(json.proficiencies).each(function (i) {
+
+                            if(!json.proficiencies[i].name.includes("Skill:")) {
+
+                                proficiencyUrls.push(json.proficiencies[i].url);
+                            }
+
+                        });
+
+                        if(character_base["Subrace"]) {
+
+                            $.getJSON('https://www.dnd5eapi.co/api/subraces/' + character_base["Subrace"], function (json) {
+                        
+                                $(json.starting_proficiencies).each(function (i) {
+                
+                                    if(!json.starting_proficiencies[i].name.includes("Skill:") && !proficiencies.includes(json.starting_proficiencies[i].name)) {
+                
+                                        proficiencyUrls.push(json.starting_proficiencies[i].url);
+                                    }
+                        
+                                });
+                            });  
+                        }
+
+                        resolve();
+                    });
+
+                });
+
+            });
+
+            const getStartingEquipment = new Promise((resolve, reject) => {
+
+                $.getJSON('https://www.dnd5eapi.co/api/starting-equipment/' + character_base["Class"], function (json) {
+            
+                    $(json.starting_equipment).each(function (i) {
+            
+                        equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
+                    
+                    });
+            
+                    resolve();
+                    
+                });
+            
+            });
+
+            Promise.all([getSavingThrows, getStartingWealth, getHitDie, getFeatures, getSkillProficiencies, getProficiencies, getStartingEquipment]).then(values => {
+
+                //console.log("second batch done");
+
+                const getPassiveWisdom = new Promise((resolve, reject) => {
+
+                    var wisdomModifier = calculate(abilityScores["WIS"]);
+                    var profBonus = document.getElementById("proficiency-bonus").value;
+                
+                    if(skillproficiencies.includes("Skill: Perception")) {
+                        character_base["PassiveWisdom"] = 10 + parseInt(wisdomModifier) + parseInt(profBonus);
+                
+                    } else {
+                        character_base["PassiveWisdom"] = 10 + parseInt(wisdomModifier);
+                    }
+                
+                    resolve();
+                    
+                });
+
+                const getProficiencyType = new Promise((resolve, reject) => {
+
+                    for(var i = 0; i < proficiencyUrls.length; i++) {
+                
+                        $.getJSON('https://www.dnd5eapi.co' + proficiencyUrls[i], function (json) {
+                
+                        proficiencies.push([json.type, json.name]);
+                
+                        });
+                    }
+
+                    resolve();
+
+                });
+
+                const getArmorclass = new Promise((resolve, reject) => {
+
+                    var promises = [];
+                
+                    for(var i = 0; i < equipment.length; i++) {
+                
+                        promises.push($.getJSON('https://www.dnd5eapi.co' + equipment[i][2]));
+                
+                    }
+                
+                    $.when.apply($, promises).then(function() {
+                
+                        for(var i = 0; i < promises.length; i++){
+                
+                            if(promises.length > 1) {
+                                
+                                if(arguments[i][0].equipment_category.name == "Armor") {
+                
+                                    armor.push ({
+                                    "name" : arguments[i][0].equipment_category.name,
+                                    "armor" : arguments[i][0].armor_class.base,
+                                    "category" : arguments[i][0].armor_category,
+                                    "bonus" : arguments[i][0].armor_class.dex_bonus,
+                                    "maxbonus" : arguments[i][0].armor_class.max_bonus,
+                                    "strength" : arguments[i][0].str_minimum
+                                    });
+                                } 
+                
+                            } else {
+                
+                                if(arguments[0].equipment_category.name == "Armor") {
+                
+                                    armor.push ({
+                                    "name" : arguments[0].equipment_category.name,
+                                    "armor" : arguments[0].armor_class.base,
+                                    "category" : arguments[0].armor_category,
+                                    "bonus" : arguments[0].armor_class.dex_bonus,
+                                    "maxbonus" : arguments[0].armor_class.max_bonus,
+                                    "strength" : arguments[0].str_minimum
+                                    });
+                                } 
+                
+                            }
+                
+                        }
+                
+                        resolve();
+                
+                    });
+                
+                });
+
+                const getAttackDetails = new Promise((resolve, reject) => {
+
+                    for(let url in equipment) {
+                
+                        $.getJSON('https://www.dnd5eapi.co' + equipment[url][2], function (json) {
+                
+                            if(json.equipment_category.name == "Weapon") {
+                            
+                                attacks.push ({
+                                "name" : json.name,
+                                "category" : json.weapon_category,
+                                "diceroll" : json.damage.damage_dice,
+                                "damagetype" : json.damage.damage_type.name,
+                                "range" : json.weapon_range,
+                                "bonus" : 0
+                                });
+                
+                                $(json.properties).each(function (i) {
+                
+                                    if(json.properties[i].name == "Finesse") {
+                
+                                        attacks[attacks.length-1]["range"] = "Finesse";
+                
+                                    }
+                
+                                });
+                                
+                                var isProficient = false;
+                                for(var item in proficiencies) {
+                                    if(proficiencies[item][1].includes(attacks[attacks.length-1]["name"]) || proficiencies[item][1].includes(attacks[attacks.length-1]["category"])) {    
+                                        isProficient = true;
+                                    }
+                                }
+                
+                                var bonus = 0;
+                
+                                    if(isProficient = true) {    
+                                        bonus = parseInt(document.getElementById("proficiency-bonus").value);
+                                    }
+                
+                                    if(attacks[attacks.length-1]["range"] == "Melee") {
+                
+                                        if(parseInt(calculate(abilityScores["STR"])) > 0) {
+                                            bonus += parseInt(calculate(abilityScores["STR"]));
+                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                                        }
+                
+                                    } else if(attacks[attacks.length-1]["range"] == "Ranged") {
+                
+                                        if(parseInt(calculate(abilityScores["DEX"])) > 0) {
+                                            bonus += parseInt(calculate(abilityScores["DEX"]));
+                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                                        }
+                
+                                    } else if(attacks[attacks.length-1]["range"] == "Finesse") {
+                
+                                        if(calculate(abilityScores["DEX"]) > calculate(abilityScores["STR"])) {
+                                            bonus += parseInt(calculate(abilityScores["DEX"])); 
+                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                
+                                        } else {
+                                            bonus += parseInt(calculate(abilityScores["STR"]));
+                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                
+                                        }
+                                    }
+                
+                                attacks[attacks.length-1]["bonus"] = bonus;
+                
+                            }
+                
+                            
+                        });
+                
+                    }
+
+                    resolve();
+                });
+
+                const getAlignment = new Promise((resolve, reject) => {
+
+                    var element = window["Alignment"];
+                    var dice = element["Dice"].split("d");
+                    var diceNumber = Math.floor(Math.random() * dice[1] + 1);
+                    const dash = '-';
+
+                    for (i in element) {
+
+                        var numbers = i.split(dash);
+
+                        if (numbers.length == 2) {
+
+                            if (diceNumber >= numbers[0] && diceNumber <= numbers[1]) {
+                                character_base["Alignment"] = element[i];
+                            }
+
+                        } if (numbers.length == 1 && numbers[0] != "Dice") {
+
+                            if (diceNumber == numbers[0]) {
+                                character_base["Alignment"] = element[i];
+
+                            }
+                        }
+
+                    }
+
+                    resolve();
+                });
+
+                const getSpellcasting = new Promise((resolve, reject) => {
+
+                    var cantripsAmount = 0;
+                    var firstLevelSpellsAmount = 0;
+                    var hasSpellcasting = false;
+                
+                    var getSpellNumber = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
+                
+                        if (json.hasOwnProperty('spellcasting')) {
+                
+                            hasSpellcasting = true;
+                
+                            if (json.spellcasting.hasOwnProperty('cantrips_known')) {
+                                cantripsAmount = json.spellcasting.cantrips_known;
+                            }
+                
+                            if (json.spellcasting.hasOwnProperty('spells_known')) {
+                                firstLevelSpellsAmount = json.spellcasting.spells_known;
+                            }
+                
+                            if (json.spellcasting.hasOwnProperty('spell_slots_level_1')) {
+                                character_base["SpellSlots"] = json.spellcasting.spell_slots_level_1;
+                            }
+                  
+                        }
+                
+                    });
+                
+                    getSpellNumber.done(function() {
+                
+                        if(hasSpellcasting == true) {
+                
+                            var getSpellModifier = $.getJSON('https://www.dnd5eapi.co/api/spellcasting/' + character_base["Class"], function (json2) {
+                                
+                                character_base["SpellcastingAbility"] = json2.spellcasting_ability.name;
+                    
+                            });
+                
+                            getSpellModifier.done(function() {        
+                        
+                                var classSpells = [];
+                                var chosenSpells = [];
+                                var chosenCantrips = [];
+                        
+                                var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json) {
+                                    $(json.results).each(function (i) {
+                                        classSpells.push(json.results[i].url);
+                                    });
+                                });
+                        
+                                getSpells.done(function() {
+                        
+                                    var spellsLeft = classSpells.length;
+                
+                                    for (var i = 0; i < spellsLeft; i++) {
+                        
+                                        var random = Math.floor(Math.random() * classSpells.length);
+                        
+                                        $.getJSON('https://www.dnd5eapi.co' + classSpells[random], function (json2) {
+                        
+                                            if(json2.hasOwnProperty('damage')) {
+                
+                                                if(json2.damage.hasOwnProperty('damage_at_character_level')) {
+                
+                                                    if(json2.damage.damage_at_character_level.hasOwnProperty('1')) {
+                
+                                                        if (json2.level === 0) {
+                            
+                                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
+                                                                chosenCantrips.push(json2.index); 
+                                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
+                
+                                                                } else {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
+                
+                                                                }              
+                                                            } else {
+                
+                                                                random = Math.floor(Math.random() * classSpells.length);
+                                                                spellsLeft++;
+                    
+                                                            }
+                                    
+                                                        } if (json2.level === 1) {
+                                    
+                                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
+                                                                chosenSpells.push(json2.index);
+                                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
+                
+                                                                } else {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
+                
+                                                                } 
+                                    
+                                                            } else {
+                
+                                                                random = Math.floor(Math.random() * classSpells.length);
+                                                                spellsLeft++;
+                                                            }
+                
+                                                        } 
+                
+                
+                                                    }
+                
+                                                }
+                
+                                                if(json2.damage.hasOwnProperty('damage_at_slot_level')) {
+                
+                                                    if(json2.damage.damage_at_slot_level.hasOwnProperty('1')) {
+                
+                                                        if (json2.level === 0) {
+                            
+                                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
+                                                                chosenCantrips.push(json2.index);    
+                                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+                
+                                                                } else {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+                
+                                                                }         
+                                                                spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
+                                                            } else {
+                
+                                                                random = Math.floor(Math.random() * classSpells.length);
+                                                                spellsLeft++;
+                                                            }
+                                    
+                                                        } if (json2.level === 1) {
+                                    
+                                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
+                                                                chosenSpells.push(json2.index);
+                                                                if(json2.damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+                
+                                                                } else {
+                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
+                
+                                                                } 
+                                    
+                                                            } else {
+                
+                                                                random = Math.floor(Math.random() * classSpells.length);
+                                                                spellsLeft++;
+                                                            }
+                                                        }
+                
+                                                    }
+                
+                                                }
+                                                
+                
+                                            } else if(!json2.hasOwnProperty('damage')) {
+                
+                                                if (json2.level === 0) {
+                            
+                                                    if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
+                                                        chosenCantrips.push(json2.index);               
+                                                        spellList.push([json2.name, json2.level, null, null]);
+                                                    }
+                            
+                                                } if (json2.level === 1) {
+                            
+                                                    if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
+                                                        chosenSpells.push(json2.index);
+                                                        spellList.push([json2.name, json2.level, null, null]);
+                            
+                                                    }
+                                                }
+                
+                                            }
+                                            
+                                        });
+                
+                
+                
+                                    }
+                                    
+                
+                
+                                });
+                            
+                    
+                            });
+                
+                        }
+                
+                        resolve();
+                        
+                    });
+                
+                });
+
+                Promise.all([getPassiveWisdom, getProficiencyType, getArmorclass, getAttackDetails, getAlignment, getSpellcasting]).then(values => {
+
+                    //console.log("third batch done");
+
+                    const getArmorDetails = new Promise((resolve, reject) => {
+
+                    var biggestArmor = 10;
+                    var chosenArmor;
+                    var shield = 0;
+
+                    if(armor.length > 0) {
+
+                    for(var item in armor) {
+
+                    if(armor[item]["name"] != "Shield") {
+
+                    if(armor[item]["armor"] > biggestArmor && armor[item]["strength"] <= abilityScores["STR"]) {
+                        chosenArmor = armor[item];
+                        biggestArmor = parseInt(armor[item]["armor"]);
+
+                        var dex = parseInt(calculate(abilityScores["DEX"]));
+
+                        if(chosenArmor["category"] == "Light") {
+                            biggestArmor += dex;
+                        } else if(chosenArmor["category"] == "Medium") {
+
+                            if(dex > 2) {
+                                biggestArmor += 2;
+                            } else {
+                                biggestArmor += dex;
+                            }
+
+                        }
+
+                    }
+                    }
+
+                    if(armor[item]["name"] == "Shield") {
+                    shield = armor[item]["armor"];
+                    }
+
+                    }
+
+                    }
+
+                    character_base["Armorclass"] = parseInt(biggestArmor) + parseInt(shield); 
+                    resolve();
+                    });
+
+                    const insertSpellsIntoAttacks = new Promise((resolve, reject) => {
+
+                        for(var item in spellList) {
+                                                
+                            if(spellList[item][3] !== null) {
+                    
+                                var bonus = calculate(abilityScores[character_base["SpellcastingAbility"]]) + parseInt(document.getElementById("proficiency-bonus").value);
+                    
+                                attacks.push ({
+                                    "name" : spellList[item][0],
+                                    "category" : null,
+                                    "diceroll" : spellList[item][2],
+                                    "damagetype" : spellList[item][3],
+                                    "range" : null,
+                                    "bonus" : bonus
+                                });
+                    
+                            }
+                        }
+
+                        resolve();
+                    
+                    });
+
+                    const prepareBackstory = new Promise((resolve, reject) => {
+
+                        backstory["Parents"] = getItem("Parents");
+                        if (character_base["Race"] === "tiefling") {
+                            backstory["Parents2"] = getItem("TieflingParents");
+                        }
+                        if (character_base["Race"] === "half-elf") {
+                            backstory["Parents2"] = getItem("HalfElfParents");
+                        }
+                        if (character_base["Race"] === "half-orc") {
+                            backstory["Parents2"] = getItem("HalfOrcParents");
+                        }
+                    
+                        backstory["Birthplace"] = getItem("Birthplace");
+                        backstory["Family"] = getItem("Family");
+                    
+                        if (backstory["Family"].includes("#AbsentParents")) {
+                            backstory["AbsentFamily"] = getItem("AbsentParents");
+                            if(backstory["AbsentFamily"].includes("#CauseOfDeath")) {
+                                backstory["FamilyDeath"] = getItem("CauseOfDeath");
+                                removeHashtags("AbsentFamily");
+                            }
+                            removeHashtags("Family");
+                        }
+                        if (backstory["Family"].includes("#AbsentMother")) {
+                            backstory["AbsentFamily"] = getItem("AbsentMother");
+                            if(backstory["AbsentFamily"].includes("#CauseOfDeath")) {
+                                backstory["FamilyDeath"] = getItem("CauseOfDeath");
+                                removeHashtags("AbsentFamily");
+                            }
+                            removeHashtags("Family");
+                    
+                        }
+                        if (backstory["Family"].includes("#AbsentFather")) {
+                            backstory["AbsentFamily"] = getItem("AbsentFather");
+                            if(backstory["AbsentFamily"].includes("#CauseOfDeath")) {
+                                backstory["FamilyDeath"] = getItem("CauseOfDeath");
+                                removeHashtags("AbsentFamily");
+                            }
+                            removeHashtags("Family");
+                    
+                        }
+                    
+                        backstory["Lifestyle"] = getItem("Lifestyle");
+                        backstory["Home"] = getItem("Home");
+                        backstory["ChildhoodMemories"] = getItem("ChildhoodMemories");
+                    
+                        var convertedName = character_base["Occupation"].split(' ');
+                        if(convertedName.length == 2) {
+                            convertedName = convertedName[0] + convertedName[1];
+                        } else {
+                            convertedName = convertedName[0];
+                        }
+                    
+                        backstory["Occupation"] = getItem(convertedName);
+                        backstory["Class"] = getItem(character_base["Class"]);
+                    
+                        backstory["LifeEvent"] = getItem("LifeEvents");
+                    
+                        if(backstory["LifeEvent"].includes("#")) {
+                            backstory["LifeEventDetails"] = getItem(backstory["LifeEvent"].split('#').pop());
+                            removeHashtags("LifeEvent");
+                        }
+                    
+                        resolve();
+                    });
+
+                    Promise.all([getArmorDetails, insertSpellsIntoAttacks, prepareBackstory]).then(values => {
+
+                        //console.log("fourth batch done");
+                        showInfo();
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
+
+
 }
 
 function showInfo() {
@@ -373,1023 +1406,16 @@ function showInfo() {
     }
     textField.textContent += ". " + backstory["ChildhoodMemories"] + ". ";
 
-    textField2.textContent += "You're now " + character_base["Age"] + " years old, and live " + backstory["Lifestyle"] + backstory["Home"];
-    textField2.textContent += ". " + backstory["Occupation"];
-
     textField2.textContent += " " + backstory["LifeEvent"];
     if(backstory["LifeEventDetails"]) {
         textField2.textContent += ". " + backstory["LifeEventDetails"];
 
     }
 
+    textField2.textContent += " You're now " + character_base["Age"] + " years old, and live " + backstory["Lifestyle"] + backstory["Home"];
+    textField2.textContent += ". " + backstory["Occupation"];
+
     textField2.textContent += ". " + backstory["Class"];
-}
-
-var getRace = $.getJSON('https://www.dnd5eapi.co/api/races', function (json) {
-    
-    var races = [];
-
-    $(json.results).each(function (i) {
-        races.push(json.results[i].index);
-    });
-
-    var randIndex = Math.floor(Math.random() * races.length);
-    character_base["Race"] = races[randIndex];
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-
-        character_base["Speed"] = json.speed;
-
-        var subraces = [];
-
-        if (json.subraces.length > 0) {
-
-            $(json.subraces).each(function (i) {
-                subraces.push(json.subraces[i].index);
-            });
-
-            var random = Math.random() > 0.6;
-            var randIndex2 = Math.floor(Math.random() * subraces.length);
-
-            if (random) {
-
-                character_base["Subrace"] = subraces[randIndex2];
-  
-            }
-        }
-    });
-
-});
-
-var getClass = $.getJSON('https://www.dnd5eapi.co/api/classes', function (json) {
-    
-var classes = [];
-
-    $(json.results).each(function (i) {
-        classes.push(json.results[i].index);
-    });
-
-    var randIndex = Math.floor(Math.random() * classes.length);
-    character_base["Class"] = classes[randIndex];
-
-    $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
-
-        var subclasses = [];
-        if (json.subclasses.length > 0) {
-
-            $(json.subclasses).each(function (i) {
-                subclasses.push(json.subclasses[i].index);
-            });
-        }
-
-        var random = Math.random() > 0.6;
-        var randIndex2 = Math.floor(Math.random() * subclasses.length);
-
-        if (random) {          
-            character_base["Subclass"] = subclasses[randIndex2];
-        }
-
-    });
-});
-
-function getName() {
-
-    var race = character_base["Race"]; 
-    race = race.replace("-", "");
-    var raceNames = window["name_" + race];
-    var raceSurnames = window["surname_" + race];
-
-    var randIndex = Math.floor(Math.random() * raceNames.length);
-    var randIndex2 = Math.floor(Math.random() * raceSurnames.length);
-
-    character_base["Name"] = raceNames[randIndex] + " " + raceSurnames[randIndex2];
-
-}
-
-function getSavingThrows() {
-    
-    $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
-
-        $(json.saving_throws).each(function (i) {
-            savingthrows.push(json.saving_throws[i].name);
-        });
-
-    });
-}
-
-function getAbilityScores() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/ability-scores', function (json) {
-
-        var abilities = [];
-        scores = [8, 10, 12, 13, 14, 15];
-
-        $(json.results).each(function (i) {
-            abilities.push(json.results[i].name);
-        });
-
-        for (let index = 0; index < abilities.length; index++) {
-
-            var randIndex = Math.floor(Math.random() * scores.length);
-
-            abilityScores[abilities[index]] = scores[randIndex];
-            var removableIndex = scores.indexOf(scores[randIndex]);
-            scores.splice(removableIndex, 1);
-        }
-    });
-
-    addExtraAbilityScores();
-}
-
-function addExtraAbilityScores() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-
-        var bonusList = [];
-        $(json.ability_bonuses).each(function (index) {
-
-            bonusList.push(json.ability_bonuses[index].name);
-            var ability = json.ability_bonuses[index].name;
-            var number = json.ability_bonuses[index].bonus;
-
-            abilityScores[ability] += number;
-        });
-        
-        if (json.hasOwnProperty('ability_bonus_options')) {
-
-            var choose = json.ability_bonus_options.choose;
-            var listBonuses = {};
-            $(json.ability_bonus_options.from).each(function (i) {
-                listBonuses[json.ability_bonus_options.from[i].name] = json.ability_bonus_options.from[i].bonus;
-            });
-
-            for(var i = 0; i < choose; i++) {
-                var randIndex = Math.floor(Math.random() * Object.keys(listBonuses).length);
-                
-                if(!bonusList.includes(Object.keys(listBonuses)[randIndex])) {
-                    bonusList.push(Object.keys(listBonuses)[randIndex]);
-                    abilityScores[Object.keys(listBonuses)[randIndex]] += listBonuses[Object.keys(listBonuses)[randIndex]];
-                } else {
-                    choose++;
-                }
-            }
-
-        } 
-
-        if (character_base["Subrace"]) {
-            $.getJSON('https://www.dnd5eapi.co/api/subraces/' + character_base["Subrace"], function (json) {
-
-                $(json.ability_bonuses).each(function (index) {
-
-                    var ability = json.ability_bonuses[index].name;
-                    var number = json.ability_bonuses[index].bonus;
-
-                    abilityScores[ability] += number;
-                });
-            });
-        } 
-
-    });
-
-}
-
-function getStartingWealth() {
-
-    var background = character_base["Occupation"];
-    for(var choice in BackgroundGold) {
-        if(choice.includes(background)) {
-            character_base["Wealth"] = BackgroundGold[choice];
-        }
-    }
-}
-
-function getPassiveWisdom() {
-
-    var wisdomModifier = calculate(abilityScores["WIS"]);
-    var profBonus = document.getElementById("proficiency-bonus").value;
-
-    if(skillproficiencies.includes("Skill: Perception")) {
-        character_base["PassiveWisdom"] = 10 + parseInt(wisdomModifier) + parseInt(profBonus);
-
-    } else {
-        character_base["PassiveWisdom"] = 10 + parseInt(wisdomModifier);
-    }
-}
-
-function getHitDie() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
-        character_base["HitDie"] = json.hit_die;
-    
-        var dropdown = document.getElementById("hitdice");
-        var options = dropdown.options;
-    
-        for(var i = 0; i < options.length; i++) {
-        
-            if(options[i].value.includes(character_base["HitDie"])) {
-                dropdown.options.selectedIndex = i;
-            }
-    
-        }
-
-        if(calculate(abilityScores["CON"]) != "-1") {
-            character_base["HitDie"] += parseInt(calculate(abilityScores["CON"]));
-        }
-    });
-
-}
-
-function getSkillProficiencies() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base['Race'], function (json) {
-
-        $(json.starting_proficiencies).each(function (i) {
-            if(json.starting_proficiencies[i].name.includes("Skill:")) {
-                skillproficiencies.push(json.starting_proficiencies[i].name);
-            }
-        });
-        
-        let part2 = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base['Class'], function (json2) {
-
-        var amountOfLists = json2.proficiency_choices.length;
-        for(var i = 0; i < amountOfLists; i++) {
-            
-            var choose = json2.proficiency_choices[i].choose;
-            var oldRandIndex;
-
-            for(var j = 0; j < choose; j++) {
-
-                var randIndex = Math.floor(Math.random() * json2.proficiency_choices[i].from.length);
-                while(oldRandIndex == randIndex) {
-                    randIndex = Math.floor(Math.random() * json2.proficiency_choices[i].from.length);
-                }
-                
-                if(json2.proficiency_choices[i].from[randIndex].name.includes("Skill:") && !skillproficiencies.includes(json2.proficiency_choices[i].from[randIndex].name)) {
-                    skillproficiencies.push(json2.proficiency_choices[i].from[randIndex].name);
-                    oldRandIndex = randIndex;
-                }
-            }
-
-        }  
-
- 
-        });
-
-        part2.done(function () {
-
-            getPassiveWisdom();
-
-        });
-
-    });
-
-}
-
-var proficiencyUrls = [];
-function getProficiencies() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-
-        $(json.starting_proficiencies).each(function (i) {
-
-            if(!json.starting_proficiencies[i].name.includes("Skill:")) {
-
-                proficiencyUrls.push(json.starting_proficiencies[i].url);
-            }
-
-        });
-
-        if (json.hasOwnProperty('starting_proficiency_options')) {
-
-            var choose = json.starting_proficiency_options.choose;
-            var oldRandIndex;
-
-            for(var j = 0; j < choose; j++) {
-
-                var randIndex = Math.floor(Math.random() * json.starting_proficiency_options.from.length);
-                while(oldRandIndex == randIndex) {
-                    randIndex = Math.floor(Math.random() * json.starting_proficiency_options.from.length);
-                }
-
-                if(!proficiencies.includes(json.starting_proficiency_options.from[randIndex].name)) {
-
-                    proficiencyUrls.push(json.starting_proficiency_options.from[randIndex].url);
-                    oldRandIndex = randIndex;
-                }
-            }
-        }
-
-        $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
-
-            $(json.proficiencies).each(function (i) {
-
-                if(!json.proficiencies[i].name.includes("Skill:")) {
-
-                    proficiencyUrls.push(json.proficiencies[i].url);
-                }
-
-            });
-
-            if(character_base["Subrace"]) {
-
-                $.getJSON('https://www.dnd5eapi.co/api/subraces/' + character_base["Subrace"], function (json) {
-            
-                    $(json.starting_proficiencies).each(function (i) {
-    
-                        if(!json.starting_proficiencies[i].name.includes("Skill:") && !proficiencies.includes(json.starting_proficiencies[i].name)) {
-    
-                            proficiencyUrls.push(json.starting_proficiencies[i].url);
-                        }
-            
-                    });
-                });  
-            }
-
-            getProficiencyType();
-
-        });
-
-    });
-
-}
-
-function getProficiencyType() {
-
-    for(var i = 0; i < proficiencyUrls.length; i++) {
-
-        $.getJSON('https://www.dnd5eapi.co' + proficiencyUrls[i], function (json) {
-
-        proficiencies.push([json.type, json.name]);
-
-        });
-    }
-    getExpertise();
-}
-
-function getStartingEquipment() {
-
-    var shortcut; 
-
-    var getUrl = $.getJSON('https://www.dnd5eapi.co/api/starting-equipment', function (json) {
-
-        var chosenClass = character_base["Class"];
-        toUpper = chosenClass.charAt(0).toUpperCase() + chosenClass.slice(1);
-
-        $(json.results).each(function (i) {
-            if (json.results[i].class == toUpper) {
-                shortcut = json.results[i].url;
-            }
-        });
-
-    });
-
-    getUrl.done(function() {
-
-        // STARTING EQUIPMENT OPTIONS DOESN'T WORK
-        $.getJSON('https://www.dnd5eapi.co' + shortcut, function (json) {
-
-            $(json.starting_equipment).each(function (i) {
-
-                equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
-            
-            });
-
-
-            // Starting equipment options under development after API changed tree structure
-
-            // console.log(json.starting_equipment_options);
-
-            // $(json.starting_equipment_options).each(function (i) {
-
-            //     var choose = json.starting_equipment_options[i].choose;
-            
-            //     $(json.starting_equipment_options[i].from).each(function (j) {
-
-            //         console.log(json.starting_equipment_options[i].from[j].equipment.name);
-
-            //     });
-
-            // });
-
-            // for (var i = 0; i < choiceBoxes.length; i++) {
-
-            //     var chooseBoxes = json[choiceBoxes[i]];
-
-            //     var randIndex = Math.floor(Math.random() * chooseBoxes.length);
-
-            //     $(json[choiceBoxes[i]][randIndex]).each(function (j) {
-
-            //         var howMany = json[choiceBoxes[i]][randIndex].choose;
-            //         var oldRandIndex = 99;
-
-            //         for(var k = 0; k < howMany; k++) {
-
-            //             var items = json[choiceBoxes[i]][randIndex].from;
-
-            //             if(howMany > items.length) {
-            //                 howMany = items.length;
-            //             }
-
-            //             var randomIndex = Math.floor(Math.random() * items.length);
-
-            //             while(oldRandIndex == randomIndex) {
-            //                 randomIndex = Math.floor(Math.random() * items.length);
-            //             }
-
-            //             var exist = false;
-            //             for(var e in equipment) {
-
-            //                 if(equipment[e][0] == json[choiceBoxes[i]][randIndex].from[randomIndex].item.name) {
-
-            //                     exist = true;
-   
-
-            //                 } 
-            //             }
-
-            //             if(exist == false) {
-            //                 var name = json[choiceBoxes[i]][randIndex].from[randomIndex].item.name;
-            //                     var amount = json[choiceBoxes[i]][randIndex].from[randomIndex].quantity;
-            //                     var url = json[choiceBoxes[i]][randIndex].from[randomIndex].item.url;
-        
-            //                     equipment.push([name, amount, url]);
-
-            //             }
-
-            //             oldRandIndex = randomIndex;
-
-            //         }
-
-            //     });
-            // }
-
-            getAttackDetails();
-            getArmorclass();
-        });
-
-    });
-}
-
-function getAttackDetails() {
-
-    for(let url in equipment) {
-
-        $.getJSON('https://www.dnd5eapi.co' + equipment[url][2], function (json) {
-
-        if(json.equipment_category.name == "Weapon") {
-         
-            attacks.push ({
-            "name" : json.name,
-            "category" : json.weapon_category,
-            "diceroll" : json.damage.damage_dice,
-            "damagetype" : json.damage.damage_type.name,
-            "range" : json.weapon_range,
-            "bonus" : 0
-            });
-
-            $(json.properties).each(function (i) {
-
-                if(json.properties[i].name == "Finesse") {
-
-                    attacks[attacks.length-1]["range"] = "Finesse";
-
-                }
-
-            });
-            
-            var isProficient = false;
-            for(var item in proficiencies) {
-                if(proficiencies[item][1].includes(attacks[attacks.length-1]["name"]) || proficiencies[item][1].includes(attacks[attacks.length-1]["category"])) {    
-                    isProficient = true;
-                }
-            }
-
-            var bonus = 0;
-
-                if(isProficient = true) {    
-                    bonus = parseInt(document.getElementById("proficiency-bonus").value);
-                }
-
-                if(attacks[attacks.length-1]["range"] == "Melee") {
-
-                    if(parseInt(calculate(abilityScores["STR"])) > 0) {
-                        bonus += parseInt(calculate(abilityScores["STR"]));
-                        attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
-                    }
-
-                } else if(attacks[attacks.length-1]["range"] == "Ranged") {
-
-                    if(parseInt(calculate(abilityScores["DEX"])) > 0) {
-                        bonus += parseInt(calculate(abilityScores["DEX"]));
-                        attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
-                    }
-
-                } else if(attacks[attacks.length-1]["range"] == "Finesse") {
-
-                    if(calculate(abilityScores["DEX"]) > calculate(abilityScores["STR"])) {
-                        bonus += parseInt(calculate(abilityScores["DEX"])); 
-                        attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
-
-                    } else {
-                        bonus += parseInt(calculate(abilityScores["STR"]));
-                        attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
-
-                    }
-                }
-
-                attacks[attacks.length-1]["bonus"] = bonus;
-
-            }
-
-        });
-
-    }
-}
-
-function getArmorclass() {
-
-    var promises = [];
-
-    for(var i = 0; i < equipment.length; i++) {
-
-        promises.push($.getJSON('https://www.dnd5eapi.co' + equipment[i][2]));
-
-    }
-
-    $.when.apply($, promises).then(function() {
-
-        for(var i = 0; i < promises.length; i++){
-
-            if(promises.length > 1) {
-                
-                if(arguments[i][0].equipment_category.name == "Armor") {
-
-                    armor.push ({
-                    "name" : arguments[i][0].equipment_category.name,
-                    "armor" : arguments[i][0].armor_class.base,
-                    "category" : arguments[i][0].armor_category,
-                    "bonus" : arguments[i][0].armor_class.dex_bonus,
-                    "maxbonus" : arguments[i][0].armor_class.max_bonus,
-                    "strength" : arguments[i][0].str_minimum
-                    });
-                } 
-
-            } else {
-
-                if(arguments[0].equipment_category.name == "Armor") {
-
-                    armor.push ({
-                    "name" : arguments[0].equipment_category.name,
-                    "armor" : arguments[0].armor_class.base,
-                    "category" : arguments[0].armor_category,
-                    "bonus" : arguments[0].armor_class.dex_bonus,
-                    "maxbonus" : arguments[0].armor_class.max_bonus,
-                    "strength" : arguments[0].str_minimum
-                    });
-                } 
-
-            }
-
-        }
-
-        getArmorDetails();
-
-
-    });
-
-
-}
-
-function getArmorDetails() {
-
-    var biggestArmor = 10;
-    var chosenArmor;
-    var shield = 0;
-
-    if(armor.length > 0) {
-
-        for(var item in armor) {
-
-            if(armor[item]["name"] != "Shield") {
-
-                if(armor[item]["armor"] > biggestArmor && armor[item]["strength"] <= abilityScores["STR"]) {
-                    chosenArmor = armor[item];
-                    biggestArmor = parseInt(armor[item]["armor"]);
-
-                    var dex = parseInt(calculate(abilityScores["DEX"]));
-
-                    if(chosenArmor["category"] == "Light") {
-                        biggestArmor += dex;
-                    } else if(chosenArmor["category"] == "Medium") {
-
-                        if(dex > 2) {
-                            biggestArmor += 2;
-                        } else {
-                            biggestArmor += dex;
-                        }
-
-                    }
-
-                }
-            }
-            
-            if(armor[item]["name"] == "Shield") {
-                shield = armor[item]["armor"];
-            }
-
-        }
-
-    }
-
-    character_base["Armorclass"] = parseInt(biggestArmor) + parseInt(shield); 
-}
-
-function getExpertise() {
-    
-    if(character_base["Class"] == "rogue") {
-
-        randomIndex = Math.floor(Math.random() * skillproficiencies.length);
-
-        expertise = skillproficiencies[randomIndex];
-
-    }
-
-}
-
-function getFeatures() {
- 
-    let featureList = [];
-
-    var getList = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
-        
-        $(json.features).each(function (i) {
-            featureList.push(json.features[i].url);
-        });
-    });
-
-    getList.done(function() {
-        
-        for(let f in featureList) {
-
-            $.getJSON('https://www.dnd5eapi.co' + featureList[f], function (json) {
-        
-                traits.push([json.name, json.desc[0]]);
-            });
-        }
-
-    });
-}
-
-function getSpellcasting() {
-
-    var cantripsAmount = 0;
-    var firstLevelSpellsAmount = 0;
-    var hasSpellcasting = false;
-
-    var getSpellNumber = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/levels/1', function (json) {
-
-        if (json.hasOwnProperty('spellcasting')) {
-
-            hasSpellcasting = true;
-
-            if (json.spellcasting.hasOwnProperty('cantrips_known')) {
-                cantripsAmount = json.spellcasting.cantrips_known;
-            }
-
-            if (json.spellcasting.hasOwnProperty('spells_known')) {
-                firstLevelSpellsAmount = json.spellcasting.spells_known;
-            }
-
-            if (json.spellcasting.hasOwnProperty('spell_slots_level_1')) {
-                character_base["SpellSlots"] = json.spellcasting.spell_slots_level_1;
-            }
-  
-        }
-
-    });
-
-    getSpellNumber.done(function() {
-
-        if(hasSpellcasting == true) {
-
-            var getSpellModifier = $.getJSON('https://www.dnd5eapi.co/api/spellcasting/' + character_base["Class"], function (json2) {
-                
-                character_base["SpellcastingAbility"] = json2.spellcasting_ability.name;
-    
-            });
-
-            getSpellModifier.done(function() {        
-        
-                var classSpells = [];
-                var chosenSpells = [];
-                var chosenCantrips = [];
-        
-                var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json) {
-                    $(json.results).each(function (i) {
-                        classSpells.push(json.results[i].url);
-                    });
-                });
-        
-                getSpells.done(function() {
-        
-                    var spellsLeft = classSpells.length;
-
-                    for (var i = 0; i < spellsLeft; i++) {
-        
-                        var random = Math.floor(Math.random() * classSpells.length);
-        
-                        $.getJSON('https://www.dnd5eapi.co' + classSpells[random], function (json2) {
-        
-                            if(json2.hasOwnProperty('damage')) {
-
-                                if(json2.damage.hasOwnProperty('damage_at_character_level')) {
-
-                                    if(json2.damage.damage_at_character_level.hasOwnProperty('1')) {
-
-                                        if (json2.level === 0) {
-            
-                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                                                chosenCantrips.push(json2.index); 
-                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
-
-                                                } else {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
-
-                                                }              
-                                            } else {
-
-                                                random = Math.floor(Math.random() * classSpells.length);
-                                                spellsLeft++;
-    
-                                            }
-                    
-                                        } if (json2.level === 1) {
-                    
-                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                                                chosenSpells.push(json2.index);
-                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
-
-                                                } else {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
-
-                                                } 
-                    
-                                            } else {
-
-                                                random = Math.floor(Math.random() * classSpells.length);
-                                                spellsLeft++;
-                                            }
-
-                                        } 
-
-
-                                    }
-
-                                }
-
-                                if(json2.damage.hasOwnProperty('damage_at_slot_level')) {
-
-                                    if(json2.damage.damage_at_slot_level.hasOwnProperty('1')) {
-
-                                        if (json2.level === 0) {
-            
-                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                                                chosenCantrips.push(json2.index);    
-                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
-
-                                                } else {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
-
-                                                }         
-                                                spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
-                                            } else {
-
-                                                random = Math.floor(Math.random() * classSpells.length);
-                                                spellsLeft++;
-                                            }
-                    
-                                        } if (json2.level === 1) {
-                    
-                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                                                chosenSpells.push(json2.index);
-                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
-
-                                                } else {
-                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
-
-                                                } 
-                    
-                                            } else {
-
-                                                random = Math.floor(Math.random() * classSpells.length);
-                                                spellsLeft++;
-                                            }
-                                        }
-
-                                    }
-
-                                }
-                                
-
-                            } else if(!json2.hasOwnProperty('damage')) {
-
-                                if (json2.level === 0) {
-            
-                                    if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                                        chosenCantrips.push(json2.index);               
-                                        spellList.push([json2.name, json2.level, null, null]);
-                                    }
-            
-                                } if (json2.level === 1) {
-            
-                                    if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                                        chosenSpells.push(json2.index);
-                                        spellList.push([json2.name, json2.level, null, null]);
-            
-                                    }
-                                }
-
-                            }
-                            
-                        });
-
-
-
-                    }
-                    
-
-
-                });
-            
-    
-            });
-
-        }
-
-        setTimeout(insertSpellsIntoAttacks, 4000);
-
-    });
-}
-
-function insertSpellsIntoAttacks() {
-
-    for(var item in spellList) {
-                            
-        if(spellList[item][3] !== null) {
-
-            var bonus = calculate(abilityScores[character_base["SpellcastingAbility"]]) + parseInt(document.getElementById("proficiency-bonus").value);
-
-            attacks.push ({
-                "name" : spellList[item][0],
-                "category" : null,
-                "diceroll" : spellList[item][2],
-                "damagetype" : spellList[item][3],
-                "range" : null,
-                "bonus" : bonus
-            });
-
-        }
-    }
-
-}
- 
-function getLanguages() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-
-        $(json.languages).each(function (i) {
-            languages.push(json.languages[i].name);
-        });
-    });
-
-    getExtraLanguages();
-}
-
-function getExtraLanguages() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-
-        if (json.hasOwnProperty('language_options')) {
-
-            var choose = json.language_options.choose;
-            var sumLanguages = 0;
-            var theLanguages = [];
-
-            $(json.language_options.from).each(function (i) {
-                sumLanguages++;
-                theLanguages.push(json.language_options.from[i].name);
-            });
-
-            for (var i = 0; i < choose; i++) {
-
-                var randIndex = Math.floor(Math.random() * theLanguages.length);
-
-                if (!languages.includes(theLanguages[randIndex])) {
-
-                    languages.push(theLanguages[randIndex]);
-                }
-            }
-        }
-    });
-}
-
-function getTraits() {
-
-    $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-
-        $(json.traits).each(function (i) {
-
-            $.getJSON('https://www.dnd5eapi.co' + json.traits[i].url, function (json2) {
-
-                traits.push([json2.name, json2.desc[0]]);
-            });
-        });
-    });
-}
-
-function getAge() {
-
-    var ages = {};
-    ages["dwarf"] = [20, 250];
-    ages["elf"] = [50, 350];
-    ages["gnome"] = [20, 200];
-    ages["half-elf"] = [14, 125];
-    ages["half-orc"] = [8, 60];
-    ages["halfling"] = [14, 100];
-    ages["human"] = [13, 70];
-    ages["dragonborn"] = [15, 80];
-    ages["tiefling"] = [13, 70];
-
-    var minAge = Math.ceil(ages[character_base["Race"]][0]);
-    var maxAge = Math.floor(ages[character_base["Race"]][1]);
-
-    var randIndex = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
-    character_base["Age"] = randIndex;
-}
-
-function getAlignment() {
-
-    var element = window["Alignment"];
-    var dice = element["Dice"].split("d");
-    var diceNumber = Math.floor(Math.random() * dice[1] + 1);
-    const dash = '-';
-
-    for (i in element) {
-
-        var numbers = i.split(dash);
-
-        if (numbers.length == 2) {
-
-            if (diceNumber >= numbers[0] && diceNumber <= numbers[1]) {
-                character_base["Alignment"] = element[i];
-            }
-
-        } if (numbers.length == 1 && numbers[0] != "Dice") {
-
-            if (diceNumber == numbers[0]) {
-                character_base["Alignment"] = element[i];
-
-            }
-        }
-
-    }
-
-}
-
-function getOccupation() {
-
-    var element = window["Backgrounds"];
-    var dice = element["Dice"].split("d");
-    var diceNumber = Math.floor(Math.random() * dice[1] + 1);
-    const dash = '-';
-
-    for (i in element) {
-
-        var numbers = i.split(dash);
-
-        if (numbers.length == 2) {
-
-            if (diceNumber >= numbers[0] && diceNumber <= numbers[1]) {
-                character_base["Occupation"] = element[i];
-            }
-
-        } if (numbers.length == 1 && numbers[0] != "Dice") {
-
-            if (diceNumber == numbers[0]) {
-                character_base["Occupation"] = element[i];
-
-            }
-        }
-
-    }
-
-    getStartingWealth();
-    prepareBackstory();
-
 }
 
 function calculate(number) {
@@ -1447,72 +1473,6 @@ function getItem(part) {
         }
 
     }
-}
-
-function prepareBackstory() {
-
-    backstory["Parents"] = getItem("Parents");
-    if (character_base["Race"] === "tiefling") {
-        backstory["Parents2"] = getItem("TieflingParents");
-    }
-    if (character_base["Race"] === "half-elf") {
-        backstory["Parents2"] = getItem("HalfElfParents");
-    }
-    if (character_base["Race"] === "half-orc") {
-        backstory["Parents2"] = getItem("HalfOrcParents");
-    }
-
-    backstory["Birthplace"] = getItem("Birthplace");
-    backstory["Family"] = getItem("Family");
-
-    if (backstory["Family"].includes("#AbsentParents")) {
-        backstory["AbsentFamily"] = getItem("AbsentParents");
-        if(backstory["AbsentFamily"].includes("#CauseOfDeath")) {
-            backstory["FamilyDeath"] = getItem("CauseOfDeath");
-            removeHashtags("AbsentFamily");
-        }
-        removeHashtags("Family");
-    }
-    if (backstory["Family"].includes("#AbsentMother")) {
-        backstory["AbsentFamily"] = getItem("AbsentMother");
-        if(backstory["AbsentFamily"].includes("#CauseOfDeath")) {
-            backstory["FamilyDeath"] = getItem("CauseOfDeath");
-            removeHashtags("AbsentFamily");
-        }
-        removeHashtags("Family");
-
-    }
-    if (backstory["Family"].includes("#AbsentFather")) {
-        backstory["AbsentFamily"] = getItem("AbsentFather");
-        if(backstory["AbsentFamily"].includes("#CauseOfDeath")) {
-            backstory["FamilyDeath"] = getItem("CauseOfDeath");
-            removeHashtags("AbsentFamily");
-        }
-        removeHashtags("Family");
-
-    }
-
-    backstory["Lifestyle"] = getItem("Lifestyle");
-    backstory["Home"] = getItem("Home");
-    backstory["ChildhoodMemories"] = getItem("ChildhoodMemories");
-
-    var convertedName = character_base["Occupation"].split(' ');
-    if(convertedName.length == 2) {
-        convertedName = convertedName[0] + convertedName[1];
-    } else {
-        convertedName = convertedName[0];
-    }
-
-    backstory["Occupation"] = getItem(convertedName);
-    backstory["Class"] = getItem(character_base["Class"]);
-
-    backstory["LifeEvent"] = getItem("LifeEvents");
-
-    if(backstory["LifeEvent"].includes("#")) {
-        backstory["LifeEventDetails"] = getItem(backstory["LifeEvent"].split('#').pop());
-        removeHashtags("LifeEvent");
-    }
-
 }
 
 function removeHashtags(item) {
