@@ -63,18 +63,16 @@ $("#button2").click(function () {
 
 function changeText() {
 
-    var text = ["Reading the Player's Handbook..", "Trying out the fireball spell..", "Preparing the character sheet while on fire.."];
+    var text = ["Rolling some dices..", "Reading the Player's Handbook..", "Trying out the fireball spell..", "Preparing the character sheet while on fire.."];
 
     for (var i = 0; i < 3; ++i) {
 
         (function (index) {
             setTimeout(function () {
                 document.getElementById("wait-text").innerHTML = text[index];
-            }, i * 2000);
+            }, i * 3000);
         })(i);
     }
-
-    setTimeout(showInfo, 6000);
 }
 
 $("#showinfo").click(function () {
@@ -83,6 +81,8 @@ $("#showinfo").click(function () {
 
 
 function main() {
+    
+    changeText();
 
     let getRace = new Promise((resolve, reject) => {
     
@@ -162,7 +162,6 @@ function main() {
                     character_base["Subclass"] = subclasses[randIndex2];
                 }
     
-                character_base["Class"] = "sorcerer";
                 resolve();
     
             });
