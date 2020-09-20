@@ -396,7 +396,7 @@ function main() {
                             
         Promise.all([getTraits, getAge, getAbilityScores, getLanguages, getName, getOccupation]).then(values => {
             
-            console.log("first batch done");
+            //console.log("first batch done");
             
             const getSavingThrows = new Promise((resolve, reject) => {
     
@@ -596,7 +596,7 @@ function main() {
 
             Promise.all([getSavingThrows, getStartingWealth, getHitDie, getFeatures, getSkillProficiencies, getProficiencies, getStartingEquipment]).then(values => {
 
-                console.log("second batch done");
+                //console.log("second batch done");
 
                 const getPassiveWisdom = new Promise((resolve, reject) => {
 
@@ -1091,7 +1091,7 @@ function main() {
 
                 Promise.all([getPassiveWisdom, getProficiencyType, getArmorclass, getAttackDetails, getAlignment, getSpellcasting]).then(values => {
 
-                    console.log("third batch done");
+                    //console.log("third batch done");
 
                     const getArmorDetails = new Promise((resolve, reject) => {
 
@@ -1233,7 +1233,7 @@ function main() {
 
                     Promise.all([getArmorDetails, insertSpellsIntoAttacks, prepareBackstory]).then(values => {
 
-                        console.log("fourth batch done");
+                        //console.log("fourth batch done");
                         showInfo();
                     });
 
