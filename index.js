@@ -162,7 +162,7 @@ function main() {
                     character_base["Subclass"] = subclasses[randIndex2];
                 }
     
-                //character_base["Class"] = "rogue";
+                character_base["Class"] = "sorcerer";
                 resolve();
     
             });
@@ -692,74 +692,147 @@ function main() {
                     }
 
                     $.when.apply($, promises).then(function() {
-                
+
                         for(var i = 0; i < promises.length; i++){
 
-                            if(arguments[i][0].equipment_category.name == "Weapon") {
-                            
-                                attacks.push ({
-                                "name" : arguments[i][0].name,
-                                "category" : arguments[i][0].weapon_category,
-                                "diceroll" : arguments[i][0].damage.damage_dice,
-                                "damagetype" : arguments[i][0].damage.damage_type.name,
-                                "range" : arguments[i][0].weapon_range,
-                                "bonus" : 0
-                                });
-                
-                                var properties = arguments[i][0].properties.length;
+                            if(promises.length > 1) {
 
-                                for(var j = 0; j < properties; j++) {
-
-                                    if(arguments[i][0].properties[j].name == "Finesse") {
-                
-                                        attacks[attacks.length-1]["range"] = "Finesse";
-                
-                                    }
-
-                                }
+                                if(arguments[i][0].equipment_category.name == "Weapon") {
                                 
-                                var isProficient = false;
-                                for(var item in proficiencies) {
-                                    if(proficiencies[item][1].includes(attacks[attacks.length-1]["name"]) || proficiencies[item][1].includes(attacks[attacks.length-1]["category"])) {    
-                                        isProficient = true;
+                                    attacks.push ({
+                                    "name" : arguments[i][0].name,
+                                    "category" : arguments[i][0].weapon_category,
+                                    "diceroll" : arguments[i][0].damage.damage_dice,
+                                    "damagetype" : arguments[i][0].damage.damage_type.name,
+                                    "range" : arguments[i][0].weapon_range,
+                                    "bonus" : 0
+                                    });
+                    
+                                    var properties = arguments[i][0].properties.length;
+
+                                    for(var j = 0; j < properties; j++) {
+
+                                        if(arguments[i][0].properties[j].name == "Finesse") {
+                    
+                                            attacks[attacks.length-1]["range"] = "Finesse";
+                    
+                                        }
+
                                     }
+                                    
+                                    var isProficient = false;
+                                    for(var item in proficiencies) {
+                                        if(proficiencies[item][1].includes(attacks[attacks.length-1]["name"]) || proficiencies[item][1].includes(attacks[attacks.length-1]["category"])) {    
+                                            isProficient = true;
+                                        }
+                                    }
+                    
+                                    var bonus = 0;
+                    
+                                        if(isProficient == true) {    
+                                            bonus = parseInt(document.getElementById("proficiency-bonus").value);
+                                        }
+                    
+                                        if(attacks[attacks.length-1]["range"] == "Melee") {
+                    
+                                            if(parseInt(calculate(abilityScores["STR"])) > 0) {
+                                                bonus += parseInt(calculate(abilityScores["STR"]));
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                                            }
+                    
+                                        } else if(attacks[attacks.length-1]["range"] == "Ranged") {
+                    
+                                            if(parseInt(calculate(abilityScores["DEX"])) > 0) {
+                                                bonus += parseInt(calculate(abilityScores["DEX"]));
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                                            }
+                    
+                                        } else if(attacks[attacks.length-1]["range"] == "Finesse") {
+                    
+                                            if(calculate(abilityScores["DEX"]) > calculate(abilityScores["STR"])) {
+                                                bonus += parseInt(calculate(abilityScores["DEX"])); 
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                    
+                                            } else {
+                                                bonus += parseInt(calculate(abilityScores["STR"]));
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                    
+                                            }
+                                        }
+                    
+                                    attacks[attacks.length-1]["bonus"] = bonus;
+                    
                                 }
-                
-                                var bonus = 0;
-                
-                                    if(isProficient == true) {    
-                                        bonus = parseInt(document.getElementById("proficiency-bonus").value);
+
+                            } else {
+
+                                if(arguments[0].equipment_category.name == "Weapon") {
+                                
+                                    attacks.push ({
+                                    "name" : arguments[0].name,
+                                    "category" : arguments[0].weapon_category,
+                                    "diceroll" : arguments[0].damage.damage_dice,
+                                    "damagetype" : arguments[0].damage.damage_type.name,
+                                    "range" : arguments[0].weapon_range,
+                                    "bonus" : 0
+                                    });
+                    
+                                    var properties = arguments[0].properties.length;
+
+                                    for(var j = 0; j < properties; j++) {
+
+                                        if(arguments[0].properties[j].name == "Finesse") {
+                    
+                                            attacks[attacks.length-1]["range"] = "Finesse";
+                    
+                                        }
+
                                     }
-                
-                                    if(attacks[attacks.length-1]["range"] == "Melee") {
-                
-                                        if(parseInt(calculate(abilityScores["STR"])) > 0) {
-                                            bonus += parseInt(calculate(abilityScores["STR"]));
-                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
-                                        }
-                
-                                    } else if(attacks[attacks.length-1]["range"] == "Ranged") {
-                
-                                        if(parseInt(calculate(abilityScores["DEX"])) > 0) {
-                                            bonus += parseInt(calculate(abilityScores["DEX"]));
-                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
-                                        }
-                
-                                    } else if(attacks[attacks.length-1]["range"] == "Finesse") {
-                
-                                        if(calculate(abilityScores["DEX"]) > calculate(abilityScores["STR"])) {
-                                            bonus += parseInt(calculate(abilityScores["DEX"])); 
-                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
-                
-                                        } else {
-                                            bonus += parseInt(calculate(abilityScores["STR"]));
-                                            attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
-                
+                                    
+                                    var isProficient = false;
+                                    for(var item in proficiencies) {
+                                        if(proficiencies[item][1].includes(attacks[attacks.length-1]["name"]) || proficiencies[item][1].includes(attacks[attacks.length-1]["category"])) {    
+                                            isProficient = true;
                                         }
                                     }
-                
-                                attacks[attacks.length-1]["bonus"] = bonus;
-                
+                    
+                                    var bonus = 0;
+                    
+                                        if(isProficient == true) {    
+                                            bonus = parseInt(document.getElementById("proficiency-bonus").value);
+                                        }
+                    
+                                        if(attacks[attacks.length-1]["range"] == "Melee") {
+                    
+                                            if(parseInt(calculate(abilityScores["STR"])) > 0) {
+                                                bonus += parseInt(calculate(abilityScores["STR"]));
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                                            }
+                    
+                                        } else if(attacks[attacks.length-1]["range"] == "Ranged") {
+                    
+                                            if(parseInt(calculate(abilityScores["DEX"])) > 0) {
+                                                bonus += parseInt(calculate(abilityScores["DEX"]));
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                                            }
+                    
+                                        } else if(attacks[attacks.length-1]["range"] == "Finesse") {
+                    
+                                            if(calculate(abilityScores["DEX"]) > calculate(abilityScores["STR"])) {
+                                                bonus += parseInt(calculate(abilityScores["DEX"])); 
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["DEX"]);
+                    
+                                            } else {
+                                                bonus += parseInt(calculate(abilityScores["STR"]));
+                                                attacks[attacks.length-1]["ability"] = calculate(abilityScores["STR"]);
+                    
+                                            }
+                                        }
+                    
+                                    attacks[attacks.length-1]["bonus"] = bonus;
+                    
+                                }
+
                             }
                         }
                             
