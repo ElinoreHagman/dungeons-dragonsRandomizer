@@ -162,16 +162,14 @@ function main() {
                     character_base["Subclass"] = subclasses[randIndex2];
                 }
     
+                //character_base["Class"] = "rogue";
                 resolve();
     
             });
         });
     });
 
-
     Promise.all([getRace, getClass]).then(values => {
-
-        //console.log("class and race done");
 
         const getTraits = new Promise((resolve, reject) => {
         
@@ -379,10 +377,26 @@ function main() {
             resolve();
         
         });
+
+        const getStartingEquipment = new Promise((resolve, reject) => {
+
+            $.getJSON('https://www.dnd5eapi.co/api/starting-equipment/' + character_base["Class"], function (json) {
+        
+                $(json.starting_equipment).each(function (i) {
+        
+                    equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
+                
+                });
+        
+                resolve();
+                
+            });
+        
+        });
                             
         Promise.all([getTraits, getAge, getAbilityScores, getLanguages, getName, getOccupation]).then(values => {
             
-            //console.log("first batch done");
+            console.log("first batch done");
             
             const getSavingThrows = new Promise((resolve, reject) => {
     
@@ -580,25 +594,9 @@ function main() {
 
             });
 
-            const getStartingEquipment = new Promise((resolve, reject) => {
-
-                $.getJSON('https://www.dnd5eapi.co/api/starting-equipment/' + character_base["Class"], function (json) {
-            
-                    $(json.starting_equipment).each(function (i) {
-            
-                        equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
-                    
-                    });
-            
-                    resolve();
-                    
-                });
-            
-            });
-
             Promise.all([getSavingThrows, getStartingWealth, getHitDie, getFeatures, getSkillProficiencies, getProficiencies, getStartingEquipment]).then(values => {
 
-                //console.log("second batch done");
+                console.log("second batch done");
 
                 const getPassiveWisdom = new Promise((resolve, reject) => {
 
@@ -685,30 +683,40 @@ function main() {
 
                 const getAttackDetails = new Promise((resolve, reject) => {
 
+                    var promises = [];
+
                     for(let url in equipment) {
                 
-                        $.getJSON('https://www.dnd5eapi.co' + equipment[url][2], function (json) {
+                        promises.push($.getJSON('https://www.dnd5eapi.co' + equipment[url][2]));
+
+                    }
+
+                    $.when.apply($, promises).then(function() {
                 
-                            if(json.equipment_category.name == "Weapon") {
+                        for(var i = 0; i < promises.length; i++){
+
+                            if(arguments[i][0].equipment_category.name == "Weapon") {
                             
                                 attacks.push ({
-                                "name" : json.name,
-                                "category" : json.weapon_category,
-                                "diceroll" : json.damage.damage_dice,
-                                "damagetype" : json.damage.damage_type.name,
-                                "range" : json.weapon_range,
+                                "name" : arguments[i][0].name,
+                                "category" : arguments[i][0].weapon_category,
+                                "diceroll" : arguments[i][0].damage.damage_dice,
+                                "damagetype" : arguments[i][0].damage.damage_type.name,
+                                "range" : arguments[i][0].weapon_range,
                                 "bonus" : 0
                                 });
                 
-                                $(json.properties).each(function (i) {
-                
-                                    if(json.properties[i].name == "Finesse") {
+                                var properties = arguments[i][0].properties.length;
+
+                                for(var j = 0; j < properties; j++) {
+
+                                    if(arguments[i][0].properties[j].name == "Finesse") {
                 
                                         attacks[attacks.length-1]["range"] = "Finesse";
                 
                                     }
-                
-                                });
+
+                                }
                                 
                                 var isProficient = false;
                                 for(var item in proficiencies) {
@@ -719,7 +727,7 @@ function main() {
                 
                                 var bonus = 0;
                 
-                                    if(isProficient = true) {    
+                                    if(isProficient == true) {    
                                         bonus = parseInt(document.getElementById("proficiency-bonus").value);
                                     }
                 
@@ -753,13 +761,12 @@ function main() {
                                 attacks[attacks.length-1]["bonus"] = bonus;
                 
                             }
-                
+                        }
                             
-                        });
-                
-                    }
+                        resolve();
 
-                    resolve();
+                    });
+
                 });
 
                 const getAlignment = new Promise((resolve, reject) => {
@@ -831,166 +838,260 @@ function main() {
                             });
                 
                             getSpellModifier.done(function() {        
-                        
+                                       
                                 var classSpells = [];
-                                var chosenSpells = [];
-                                var chosenCantrips = [];
                         
-                                var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json) {
-                                    $(json.results).each(function (i) {
-                                        classSpells.push(json.results[i].url);
+                                var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json3) {
+
+                                    $(json3.results).each(function (i) {
+                                        classSpells.push(json3.results[i].url);
                                     });
                                 });
-                        
+
                                 getSpells.done(function() {
                         
-                                    var spellsLeft = classSpells.length;
-                
-                                    for (var i = 0; i < spellsLeft; i++) {
-                        
+                                    var promises = [];
+                                    
+                                    for (var i = 0; i < classSpells.length; i++) {
+
+                                        promises.push($.getJSON('https://www.dnd5eapi.co' + classSpells[i]));
+
+                                    }
+
+                                    $.when.apply($, promises).then(function() {
+                                        
                                         var random = Math.floor(Math.random() * classSpells.length);
-                        
-                                        $.getJSON('https://www.dnd5eapi.co' + classSpells[random], function (json2) {
-                        
-                                            if(json2.hasOwnProperty('damage')) {
+                                        var cantripsPicked = 0;
+                                        var spellsPicked = 0;
+                                        var chosenCantrips = [];
+                                        var chosenSpells = [];
+
+                                        while (cantripsAmount > cantripsPicked) {
+                                            
+                                            random = Math.floor(Math.random() * classSpells.length);
+
+                                            if(arguments[random][0].hasOwnProperty('damage')) {
+                    
+                                                if(arguments[random][0].damage.hasOwnProperty('damage_at_character_level')) {
                 
-                                                if(json2.damage.hasOwnProperty('damage_at_character_level')) {
+                                                    if(arguments[random][0].damage.damage_at_character_level.hasOwnProperty('1')) {
                 
-                                                    if(json2.damage.damage_at_character_level.hasOwnProperty('1')) {
-                
-                                                        if (json2.level === 0) {
+                                                        if (arguments[random][0].level === 0) {
                             
-                                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                                                                chosenCantrips.push(json2.index); 
-                                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
+                                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(arguments[random][0].index)) {
+
+                                                                chosenCantrips.push(arguments[random][0].index); 
+
+                                                                if(arguments[random][0].damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_character_level['1'], arguments[random][0].damage.damage_type["index"]]);
+                                                                    
                 
                                                                 } else {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_character_level['1'], null]);
                 
-                                                                }              
+                                                                } 
+                                                                
+                                                                cantripsPicked++;
+
                                                             } else {
                 
                                                                 random = Math.floor(Math.random() * classSpells.length);
-                                                                spellsLeft++;
                     
                                                             }
                                     
-                                                        } if (json2.level === 1) {
-                                    
-                                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                                                                chosenSpells.push(json2.index);
-                                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], json2.damage.damage_type["index"]]);
+                                                        } else {
+                                                            random = Math.floor(Math.random() * classSpells.length);
+                                                        }
                 
-                                                                } else {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_character_level['1'], null]);
-                
-                                                                } 
-                                    
-                                                            } else {
-                
-                                                                random = Math.floor(Math.random() * classSpells.length);
-                                                                spellsLeft++;
-                                                            }
-                
-                                                        } 
-                
-                
+                                                    } else {
+                                                        random = Math.floor(Math.random() * classSpells.length);
                                                     }
                 
                                                 }
+                                                
+                                                else if(arguments[random][0].damage.hasOwnProperty('damage_at_slot_level')) {
                 
-                                                if(json2.damage.hasOwnProperty('damage_at_slot_level')) {
+                                                    if(arguments[random][0].damage.damage_at_slot_level.hasOwnProperty('1')) {
                 
-                                                    if(json2.damage.damage_at_slot_level.hasOwnProperty('1')) {
-                
-                                                        if (json2.level === 0) {
+                                                        if (arguments[random][0].level === 0) {
                             
-                                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                                                                chosenCantrips.push(json2.index);    
-                                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+                                                            if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(arguments[random][0].index)) {
+
+                                                                chosenCantrips.push(arguments[random][0].index);    
+
+                                                                if(arguments[random][0].damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1'], arguments[random][0].damage.damage_type["index"]]);
                 
                                                                 } else {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1'], arguments[random][0].damage.damage_type["index"]]);
                 
                                                                 }         
-                                                                spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
+
+                                                                cantripsPicked++;
+
+
                                                             } else {
                 
                                                                 random = Math.floor(Math.random() * classSpells.length);
-                                                                spellsLeft++;
                                                             }
                                     
-                                                        } if (json2.level === 1) {
-                                    
-                                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                                                                chosenSpells.push(json2.index);
-                                                                if(json2.damage.hasOwnProperty('damage_type')) {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], json2.damage.damage_type["index"]]);
-                
-                                                                } else {
-                                                                    spellList.push([json2.name, json2.level, json2.damage.damage_at_slot_level['1'], null]);
-                
-                                                                } 
-                                    
-                                                            } else {
-                
-                                                                random = Math.floor(Math.random() * classSpells.length);
-                                                                spellsLeft++;
-                                                            }
+                                                        } else {
+                                                            random = Math.floor(Math.random() * classSpells.length);
                                                         }
                 
+                                                    } else {
+                                                        random = Math.floor(Math.random() * classSpells.length);
                                                     }
                 
                                                 }
                                                 
                 
-                                            } else if(!json2.hasOwnProperty('damage')) {
-                
-                                                if (json2.level === 0) {
+                                            } else {
+
+                                                if (arguments[random][0].level === 0) {
                             
-                                                    if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(json2.index)) {
-                                                        chosenCantrips.push(json2.index);               
-                                                        spellList.push([json2.name, json2.level, null, null]);
+                                                    if (chosenCantrips.length < cantripsAmount && !chosenCantrips.includes(arguments[random][0].index)) {
+
+                                                        chosenCantrips.push(arguments[random][0].index);    
+
+                                                        spellList.push([arguments[random][0].name, arguments[random][0].level, null, null]);
+                                                        cantripsPicked++;
+
+                                                    } else {
+                                                        random = Math.floor(Math.random() * classSpells.length);
                                                     }
                             
-                                                } if (json2.level === 1) {
-                            
-                                                    if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(json2.index)) {
-                                                        chosenSpells.push(json2.index);
-                                                        spellList.push([json2.name, json2.level, null, null]);
-                            
-                                                    }
+                                                } else {
+                                                    random = Math.floor(Math.random() * classSpells.length);
                                                 }
                 
                                             }
+
+                                        }
+
+                                        while (firstLevelSpellsAmount > spellsPicked) {
                                             
-                                        });
+                                            random = Math.floor(Math.random() * classSpells.length);
+
+                                            if(arguments[random][0].hasOwnProperty('damage')) {
+
+                                                if(arguments[random][0].damage.hasOwnProperty('damage_at_character_level')) {
                 
+                                                    if(arguments[random][0].damage.damage_at_character_level.hasOwnProperty('1')) {
                 
-                
-                                    }
-                                    
-                
-                
-                                });
+                                                        if (arguments[random][0].level === 1) {
                             
+                                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(arguments[random][0].index)) {
+
+                                                                chosenSpells.push(arguments[random][0].index); 
+
+                                                                if(arguments[random][0].damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_character_level['1'], arguments[random][0].damage.damage_type["index"]]);
+                                                                    
+                
+                                                                } else {
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_character_level['1'], null]);
+                
+                                                                } 
+                                                                
+                                                                spellsPicked++;
+
+                                                            } else {
+                
+                                                                random = Math.floor(Math.random() * classSpells.length);
                     
+                                                            }
+                                    
+                                                        } else {
+                                                            random = Math.floor(Math.random() * classSpells.length);
+                                                        }
+                
+                                                    } else {
+                                                        random = Math.floor(Math.random() * classSpells.length);
+                                                    }
+                
+                                                }
+                                                
+                                                else if(arguments[random][0].damage.hasOwnProperty('damage_at_slot_level')) {
+                
+                                                    if(arguments[random][0].damage.damage_at_slot_level.hasOwnProperty('1')) {
+                
+                                                        if (arguments[random][0].level === 1) {
+                            
+                                                            if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(arguments[random][0].index)) {
+
+                                                                chosenSpells.push(arguments[random][0].index);    
+
+                                                                if(arguments[random][0].damage.hasOwnProperty('damage_type')) {
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1'], arguments[random][0].damage.damage_type["index"]]);
+                
+                                                                } else {
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1'], arguments[random][0].damage.damage_type["index"]]);
+                
+                                                                }         
+
+                                                                spellsPicked++;
+
+
+                                                            } else {
+                
+                                                                random = Math.floor(Math.random() * classSpells.length);
+                                                            }
+                                    
+                                                        } else {
+                                                            random = Math.floor(Math.random() * classSpells.length);
+                                                        }
+                
+                                                    } else {
+                                                        random = Math.floor(Math.random() * classSpells.length);
+                                                    }
+                
+                                                }
+                                                
+                
+                                            } else {
+
+                                                if (arguments[random][0].level === 1) {
+                            
+                                                    if (chosenSpells.length < firstLevelSpellsAmount && !chosenSpells.includes(arguments[random][0].index)) {
+
+                                                        chosenSpells.push(arguments[random][0].index);    
+
+                                                        spellList.push([arguments[random][0].name, arguments[random][0].level, null, null]);
+                                                        spellsPicked++;
+
+                                                    } else {
+                                                        random = Math.floor(Math.random() * classSpells.length);
+                                                    }
+                            
+                                                } else {
+                                                    random = Math.floor(Math.random() * classSpells.length);
+                                                }
+                
+                                            }
+
+                                        }
+
+                                        resolve();
+
+                                    });
+                                                      
+                                });
                             });
                 
+                        } else {
+
+                            resolve();
+
                         }
-                
-                        resolve();
-                        
+                                      
                     });
                 
                 });
 
                 Promise.all([getPassiveWisdom, getProficiencyType, getArmorclass, getAttackDetails, getAlignment, getSpellcasting]).then(values => {
 
-                    //console.log("third batch done");
+                    console.log("third batch done");
 
                     const getArmorDetails = new Promise((resolve, reject) => {
 
@@ -1002,32 +1103,34 @@ function main() {
 
                     for(var item in armor) {
 
-                    if(armor[item]["name"] != "Shield") {
+                        if(armor[item]["name"] != "Shield") {
 
-                    if(armor[item]["armor"] > biggestArmor && armor[item]["strength"] <= abilityScores["STR"]) {
-                        chosenArmor = armor[item];
-                        biggestArmor = parseInt(armor[item]["armor"]);
+                            if(armor[item]["armor"] > biggestArmor && armor[item]["strength"] <= abilityScores["STR"]) {
+                                chosenArmor = armor[item];
+                                biggestArmor = parseInt(armor[item]["armor"]);
 
-                        var dex = parseInt(calculate(abilityScores["DEX"]));
+                                var dex = parseInt(calculate(abilityScores["DEX"]));
 
-                        if(chosenArmor["category"] == "Light") {
-                            biggestArmor += dex;
-                        } else if(chosenArmor["category"] == "Medium") {
+                                if(chosenArmor["category"] == "Light") {
+                                    biggestArmor += dex;
+                                } else if(chosenArmor["category"] == "Medium") {
 
-                            if(dex > 2) {
-                                biggestArmor += 2;
-                            } else {
-                                biggestArmor += dex;
+                                    if(dex > 2) {
+                                        biggestArmor += 2;
+                                    } else {
+                                        biggestArmor += dex;
+                                    }
+
+                                }
+
                             }
-
                         }
 
-                    }
-                    }
+                        if(armor[item]["category"] == "Shield") {
 
-                    if(armor[item]["name"] == "Shield") {
-                    shield = armor[item]["armor"];
-                    }
+                            shield = armor[item]["armor"];
+
+                        }
 
                     }
 
@@ -1130,7 +1233,7 @@ function main() {
 
                     Promise.all([getArmorDetails, insertSpellsIntoAttacks, prepareBackstory]).then(values => {
 
-                        //console.log("fourth batch done");
+                        console.log("fourth batch done");
                         showInfo();
                     });
 
