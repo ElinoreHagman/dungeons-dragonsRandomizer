@@ -377,6 +377,7 @@ function main() {
         
         });
 
+        // DO THE CHOOSING STARTING EQUIPMENT PART
         const getStartingEquipment = new Promise((resolve, reject) => {
 
             $.getJSON('https://www.dnd5eapi.co/api/starting-equipment/' + character_base["Class"], function (json) {
