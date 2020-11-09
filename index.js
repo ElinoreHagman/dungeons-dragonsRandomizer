@@ -179,6 +179,7 @@ function main() {
                     $.getJSON('https://www.dnd5eapi.co' + json.traits[i].url, function (json2) {
         
                         traits.push([json2.name, json2.desc[0]]);
+
                     });
                 });
         
@@ -198,7 +199,7 @@ function main() {
             var randIndex2 = Math.floor(Math.random() * raceSurnames.length);
         
             character_base["Name"] = raceNames[randIndex] + " " + raceSurnames[randIndex2];
-        
+                    
             resolve();
         
         });
@@ -223,83 +224,6 @@ function main() {
             character_base["Age"] = randIndex;
         
             resolve();
-        });
-        
-        const getAbilityScores = new Promise((resolve, reject) => {
-        
-            var abilities = [];
-            scores = [8, 10, 12, 13, 14, 15];
-        
-            var getAbility1 = $.getJSON('https://www.dnd5eapi.co/api/ability-scores', function (json) {
-        
-                $(json.results).each(function (i) {
-                    abilities.push(json.results[i].name);
-                });
-        
-                for (let index = 0; index < abilities.length; index++) {
-        
-                    var randIndex = Math.floor(Math.random() * scores.length);
-        
-                    abilityScores[abilities[index]] = scores[randIndex];
-                    var removableIndex = scores.indexOf(scores[randIndex]);
-                    scores.splice(removableIndex, 1);
-                }
-            });
-        
-            getAbility1.done(function(){
-        
-                $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
-        
-                    var bonusList = [];
-        
-                    $(json.ability_bonuses).each(function (index) {
-        
-                        bonusList.push(json.ability_bonuses[index].name);
-                        var ability = json.ability_bonuses[index].name;
-                        var number = json.ability_bonuses[index].bonus;
-        
-                        abilityScores[ability] += number;
-                    });
-                    
-                    if (json.hasOwnProperty('ability_bonus_options')) {
-        
-                        var choose = json.ability_bonus_options.choose;
-                        var listBonuses = {};
-                        $(json.ability_bonus_options.from).each(function (i) {
-                            listBonuses[json.ability_bonus_options.from[i].name] = json.ability_bonus_options.from[i].bonus;
-                        });
-        
-                        for(var i = 0; i < choose; i++) {
-                            var randIndex = Math.floor(Math.random() * Object.keys(listBonuses).length);
-                            
-                            if(!bonusList.includes(Object.keys(listBonuses)[randIndex])) {
-                                bonusList.push(Object.keys(listBonuses)[randIndex]);
-                                abilityScores[Object.keys(listBonuses)[randIndex]] += listBonuses[Object.keys(listBonuses)[randIndex]];
-                            } else {
-                                choose++;
-                            }
-                        }
-        
-                    } 
-        
-                    if (character_base["Subrace"]) {
-                        $.getJSON('https://www.dnd5eapi.co/api/subraces/' + character_base["Subrace"], function (json) {
-        
-                            $(json.ability_bonuses).each(function (index) {
-        
-                                var ability = json.ability_bonuses[index].name;
-                                var number = json.ability_bonuses[index].bonus;
-        
-                                abilityScores[ability] += number;
-                            });
-                        });
-                    } 
-                
-                    resolve();
-        
-                });
-        
-            });
         });
         
         const getLanguages = new Promise((resolve, reject) => {
@@ -377,6 +301,86 @@ function main() {
         
         });
 
+        const getAbilityScores = new Promise((resolve, reject) => {
+        
+            var abilities = [];
+            scores = [8, 10, 12, 13, 14, 15];
+        
+            var getAbility1 = $.getJSON('https://www.dnd5eapi.co/api/ability-scores', function (json) {
+        
+                $(json.results).each(function (i) {
+                    abilities.push(json.results[i].name);
+                });
+        
+                for (let index = 0; index < abilities.length; index++) {
+        
+                    var randIndex = Math.floor(Math.random() * scores.length);
+                    abilityScores[abilities[index]] = scores[randIndex];
+                    var removableIndex = scores.indexOf(scores[randIndex]);
+                    scores.splice(removableIndex, 1);
+                }
+
+            });
+        
+            getAbility1.done(function(){
+    
+                $.getJSON('https://www.dnd5eapi.co/api/races/' + character_base["Race"], function (json) {
+        
+                    var bonusList = [];
+        
+                    $(json.ability_bonuses).each(function (index) {
+
+                        bonusList.push(json.ability_bonuses[index].ability_score.name);
+                        var ability = json.ability_bonuses[index].ability_score.name;
+                        var number = json.ability_bonuses[index].bonus;
+        
+                        abilityScores[ability] += number;
+
+                    });
+                    
+                    if (json.hasOwnProperty('ability_bonus_options')) {
+        
+                        var choose = json.ability_bonus_options.choose;
+                        var listBonuses = {};
+                        $(json.ability_bonus_options.from).each(function (i) {
+                            listBonuses[json.ability_bonus_options.from[i].ability_score.name] = json.ability_bonus_options.from[i].bonus;
+                        });
+        
+                        for(var i = 0; i < choose; i++) {
+                            var randIndex = Math.floor(Math.random() * Object.keys(listBonuses).length);
+                            
+                            if(!bonusList.includes(Object.keys(listBonuses)[randIndex])) {
+                                bonusList.push(Object.keys(listBonuses)[randIndex]);
+                                abilityScores[Object.keys(listBonuses)[randIndex]] += listBonuses[Object.keys(listBonuses)[randIndex]];
+                            } else {
+                                choose++;
+                            }
+                        }
+        
+                    } 
+        
+                    
+                    if (character_base["Subrace"]) {
+                        $.getJSON('https://www.dnd5eapi.co/api/subraces/' + character_base["Subrace"], function (json) {
+        
+                            $(json.ability_bonuses).each(function (index) {
+        
+                                var ability = json.ability_bonuses[index].ability_score.name;
+                                var number = json.ability_bonuses[index].bonus;
+        
+                                abilityScores[ability] += number;
+                            });
+                        });
+                    } 
+                
+                    resolve();
+        
+                });
+        
+            });
+        
+        });
+
         // DO THE CHOOSING STARTING EQUIPMENT PART
         const getStartingEquipment = new Promise((resolve, reject) => {
 
@@ -385,7 +389,7 @@ function main() {
                 $(json.starting_equipment).each(function (i) {
         
                     equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
-                
+
                 });
         
                 resolve();
@@ -397,7 +401,7 @@ function main() {
         Promise.all([getTraits, getAge, getAbilityScores, getLanguages, getName, getOccupation]).then(values => {
             
             //console.log("first batch done");
-            
+
             const getSavingThrows = new Promise((resolve, reject) => {
     
                 $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
@@ -1346,7 +1350,6 @@ function showInfo() {
 
         var totalNumber = "character-" + ability.toLowerCase();
         var modifierNumber = "modifier-" + ability.toLowerCase();
-
         document.getElementById(totalNumber).value = abilityScores[ability];
         document.getElementById(modifierNumber).value = calculate(abilityScores[ability]);
     }
