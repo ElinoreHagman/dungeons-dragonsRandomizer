@@ -908,9 +908,9 @@ function main() {
                 
                         if(hasSpellcasting == true) {
                 
-                            var getSpellModifier = $.getJSON('https://www.dnd5eapi.co/api/spellcasting/' + character_base["Class"], function (json2) {
+                            var getSpellModifier = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json2) {
                                 
-                                character_base["SpellcastingAbility"] = json2.spellcasting_ability.name;
+                                character_base["SpellcastingAbility"] = json2.spellcasting.spellcasting_ability.name;
                     
                             });
                 
