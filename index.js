@@ -143,7 +143,7 @@ function main() {
         getClasses.done(function() {
     
             var randIndex = Math.floor(Math.random() * classes.length);
-            character_base["Class"] = classes[randIndex];
+            character_base["Class"] = "bard";
     
             $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
     
@@ -915,7 +915,7 @@ function main() {
                             });
                 
                             getSpellModifier.done(function() {        
-                                       
+
                                 var classSpells = [];
                         
                                 var getSpells = $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"] + '/spells', function (json3) {
@@ -1103,7 +1103,7 @@ function main() {
                                                                     spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1'], arguments[random][0].damage.damage_type["index"]]);
                 
                                                                 } else {
-                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1'], arguments[random][0].damage.damage_type["index"]]);
+                                                                    spellList.push([arguments[random][0].name, arguments[random][0].level, arguments[random][0].damage.damage_at_slot_level['1']]);
                 
                                                                 }         
 
