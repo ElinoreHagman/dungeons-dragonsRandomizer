@@ -143,7 +143,7 @@ function main() {
         getClasses.done(function() {
     
             var randIndex = Math.floor(Math.random() * classes.length);
-            character_base["Class"] = "bard";
+            character_base["Class"] = classes[randIndex];
     
             $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
     
