@@ -384,13 +384,13 @@ function main() {
         // DO THE CHOOSING STARTING EQUIPMENT PART
         const getStartingEquipment = new Promise((resolve, reject) => {
 
-            $.getJSON('https://www.dnd5eapi.co/api/starting-equipment/' + character_base["Class"], function (json) {
+            $.getJSON('https://www.dnd5eapi.co/api/classes/' + character_base["Class"], function (json) {
         
                 $(json.starting_equipment).each(function (i) {
         
                     equipment.push([json.starting_equipment[i].equipment.name, json.starting_equipment[i].quantity, json.starting_equipment[i].equipment.url]);
 
-                });
+                });                             
         
                 resolve();
                 
